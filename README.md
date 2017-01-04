@@ -1,4 +1,4 @@
-Pic-code 图片验证码 v1.0.2
+Pic-code 图片验证码 v1.0.3
 ====
 
 
@@ -34,6 +34,7 @@ Pic-code 图片验证码 v1.0.2
         valid_range: 5, // 图片验证正确的容错范围，默认是5
         unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
         background_url: ["/img/1.jpg","/img/2.jpg"], // 大图路径，数组
+        pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
         Callback_error: function() { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();  如果没有自定义方法此参数不传
         	alert(11)
         }, 
@@ -52,5 +53,8 @@ Pic-code 图片验证码 v1.0.2
 
 ###更新历史
     
-    1. 通过jshint验证
+    1. 修改  红色  X  的样式  变成不透明的红色
+    2. 验证图片换成1000的大图
+    3. 修改ios端拖动滑块，滑块背景闪烁的bug
+    4. 添加遮罩层，添加遮罩层显示参数，pic_mask
     
