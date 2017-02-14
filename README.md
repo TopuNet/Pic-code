@@ -11,7 +11,7 @@ Pic-code 图片验证码 v2.0.1
 
     
     1.将pic_code.js文件放在jq中（原生规范）或widget/lib（AMD规范）中
-    2.html创建验证码的外包盒子，确定验证码位置，将盒子class或者id传到opt中相应位置
+    2.html创建验证码的外包盒子，确定验证码位置，将盒子class或者id传到opt中相应位置
     
 ##页面引用：
         
