@@ -38,7 +38,7 @@ Pic-code 图片验证码 v2.0.1
         pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
         Pic_mask_color : "#000", //验证码大遮罩层颜色
         Pic_mask_opacity : 0.6, //验证码大遮罩层透明度
-        Pic_click_key : "ture", //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏
+        Pic_click_key : "ture", //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏
         background_url:["/img/1.jpg","/img/2.jpg","/img/3.jpg","/img/4.jpg","/img/5.jpg","/img/6.jpg","/img/7.jpg","/img/8.jpg","/img/9.jpg"], // 大图路径，数组
         Callback_error: function() { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();  如果没有自定义方法此参数不传
         	alert(11)
