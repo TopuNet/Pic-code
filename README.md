@@ -38,8 +38,8 @@ Pic-code 图片验证码 v2.0.1
         pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
         Pic_mask_color : "#000", //验证码大遮罩层颜色
         Pic_mask_opacity : 0.6, //验证码大遮罩层透明度
-        Pic_click_key : "ture", //开关，true
-        background_url: ["/img/1.jpg","/img/2.jpg","/img/3.jpg","/img/4.jpg","/img/5.jpg","/img/6.jpg","/img/7.jpg","/img/8.jpg","/img/9.jpg"], // 大图路径，数组
+        Pic_click_key : "ture", //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏
+        background_url: ["/img/1.jpg","/img/2.jpg","/img/3.jpg","/img/4.jpg","/img/5.jpg","/img/6.jpg","/img/7.jpg","/img/8.jpg","/img/9.jpg"], // 大图路径，数组
         Callback_error: function() { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();  如果没有自定义方法此参数不传
         	alert(11)
         }, 
@@ -63,11 +63,11 @@ v2.0.1
         1. 修改验证码显示样式
         2. 修改使用方式，只需在项目中添加js即可，无需添加less文件
         3. 增加点击验证码图片刷新验证码功能，增加验证码显示和隐藏功能
-        4. 添加外部调用方
-            pic_code.pic_code_show();  显示验证码弹层
+        4. 添加外部调用方法
+            pic_code.pic_code_show();  显示验证码弹层
             pic_code.pic_code_hide();  隐藏验证码弹层
             pic_code.refresh_pic();    刷新验证码
-        5. 遮罩层功能修改，传参决定是否显示遮罩层（pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层），传参设置遮罩层颜色（Pic_mask_color : "#000", //验证码大遮罩层颜色），传参设置遮罩层透明度（Pic_mask_opacity : 0.6, //验证码大遮罩层透明度），传参判断点击遮罩层验证码是否消失（Pic_click_key : "ture", //开关，true）
+        5. 遮罩层功能修改，传参决定是否显示遮罩层（pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层），传参设置遮罩层颜色（Pic_mask_color : "#000", //验证码大遮罩层颜色），传参设置遮罩层透明度（Pic_mask_opacity : 0.6, //验证码大遮罩层透明度），传参判断点击遮罩层验证码是否消失（Pic_click_key : "ture", //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏）
             
 v1.0.3
     
