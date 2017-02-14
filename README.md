@@ -39,13 +39,13 @@ Pic-code 图片验证码 v2.0.1
         Pic_mask_color : "#000", //验证码大遮罩层颜色
         Pic_mask_opacity : 0.6, //验证码大遮罩层透明度
         Pic_click_key : "ture", //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏
-        background_url: ["/img/1.jpg","/img/2.jpg","/img/3.jpg","/img/4.jpg","/img/5.jpg","/img/6.jpg","/img/7.jpg","/img/8.jpg","/img/9.jpg"], // 大图路径，数组
+        background_url: ["/img/1.jpg","/img/2.jpg","/img/3.jpg","/img/4.jpg","/img/5.jpg","/img/6.jpg","/img/7.jpg","/img/8.jpg","/img/9.jpg"], // 大图路径，数组
         Callback_error: function() { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();  如果没有自定义方法此参数不传
         	alert(11)
         }, 
         Callback_error_repeatedly: function() { // 多次验证失败回调，优先于Callback_error默认事件pic_code.change_background_url(); 如果没有自定义方法此参数不传
         	alert('aa')
-        }, 
+        },
         Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数
         Callback_success: function() { //验证成功回调，默认方法：pic_code.valid_success_callback()	如果没有自定义方法此参数不传
         	alert('bb')
