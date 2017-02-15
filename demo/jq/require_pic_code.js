@@ -14,8 +14,7 @@ require(["pic_code", "/inc/jquery.min.js"], function($pic_code) {
             Pic_mask_opacity : 0.6, ////验证码大遮罩层透明度
             Pic_click_key : "ture", //开关，true
 		    background_url: ["/img/1.jpg","/img/2.jpg","/img/3.jpg","/img/4.jpg","/img/5.jpg","/img/6.jpg","/img/7.jpg","/img/8.jpg","/img/9.jpg"], // 大图路径，数组
-		    Callback_error: function() { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
-                pic_code.doMove();
+		    Callback_error: function() { // 验证失败回调，默认为滑块和拼图小块滑回原位,底部出现文字提示;
             }, 
             Callback_error_repeatedly: function() { // 多次验证失败回调，优先于Callback_error  默认事件pic_code.change_background_url();
                 pic_code.change_background_url();

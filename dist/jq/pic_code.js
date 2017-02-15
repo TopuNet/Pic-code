@@ -19,7 +19,7 @@ var opt = {
     pic_mask: false,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
     Pic_mask_color : "#000", //验证码大遮罩层颜色
     Pic_mask_opacity : 0.8, ////验证码大遮罩层透明度
-    Pic_click_key : "ture", //开关，true
+    Pic_click_key : "ture", //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏
     Callback_error: function() { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
         pic_code.doMove();
     }, 
@@ -52,7 +52,7 @@ var pic_code = {
             pic_mask: false,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
             Pic_mask_color : "#000", //验证码大遮罩层颜色
             Pic_mask_opacity : 0.8, ////验证码大遮罩层透明度
-            Pic_click_key : "ture", //开关，true
+            Pic_click_key : "ture", //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏
             Callback_error: function() { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
                 pic_code.doMove();
             }, 
@@ -133,11 +133,19 @@ var pic_code = {
         }).attr('id','pic_code_mask');
         outDiv.before(_this.pic_code_bg);
 
+        //创建验证码盒子
+        _this.pic_box = $(document.createElement('div')).css({
+            "width" : _this._opt.div_width + _this._opt.unit,
+            "height" : _this._opt.div_height + _this._opt.unit,
+            "overflow" : "hidden",
+            "position" : "relative"
+        }).addClass('pic_box').appendTo(outDiv);
+
         //创建大图外包
         _this.big_pic = $(document.createElement('div')).css({
             "width": _this._opt.div_width + _this._opt.unit,
             "position": "relative",
-        }).addClass('pic_bao').appendTo(outDiv);
+        }).addClass('pic_bao').appendTo(_this.pic_box);
 
         //创建大图div
         _this.big_pic_img = $(document.createElement('div')).css({
@@ -159,6 +167,7 @@ var pic_code = {
         _this.pic_code_fresh = $(document.createElement('div')).css({
             "width": "60px",
             "height": "20px",
+            "margin-top" : "10px",
             "background": "#ddd",
             "line-height": "20px",
             "font-size": "12px",
@@ -168,7 +177,6 @@ var pic_code = {
             "border-radius": "10px",
             "float" : "right",
             "position" : "relative",
-            "top" : "-20px"
         }).addClass('refresh').html("点击刷新").appendTo(outDiv);
 
         //创建滑块与轨道外包层
@@ -177,6 +185,7 @@ var pic_code = {
             "height": "30px",
             "margin-top": "10px",
             "position": "relative",
+            "float" : "left"
         }).addClass('line_bao').appendTo(outDiv);
 
         //创建滑块轨道
@@ -219,37 +228,43 @@ var pic_code = {
             "display": "none",
         }).addClass('success').html('验证成功').appendTo(outDiv);
 
+        //创建验证失败盒子
+        _this.pic_fail_box = $(document.createElement("div")).css({
+            "width": _this._opt.div_width + _this._opt.unit,
+            "height": "30px",
+            "overflow" : "hidden",
+            "position" : "relative"
+        }).addClass('pic_fail_box').appendTo(_this.pic_box);
+
         //创建提示信息遮罩层
         _this.pic_success_mask = $(document.createElement('div')).css({
             "width": _this._opt.div_width + _this._opt.unit,
-            "height": "160px",
-            "background": "#000",
+            "height": "30px",
+            "background": "#fff",
             "opacity": "0.6",
             "filter": "alpha(opacity=60)",
-            "position": "absolute",
-            'top':0, 
-            "left": 0,
+            "position" : "relative",
             "font-size": "60px",
             "line-height": "160px",
             "text-align": "center",
             "font-weight": "bold",
-            "display": "none",
-        }).addClass('pic_code_mask').appendTo(outDiv);
+        }).addClass('pic_code_mask').appendTo(_this.pic_fail_box);
 
         //创建失败提示信息
         _this.pic_fail = $(document.createElement('div')).css({
             "width": _this._opt.div_width + _this._opt.unit,
-            "height": "160px",
+            "height": "30px",
             "position": "absolute",
             "top":0, 
             "left": 0,
-            "font-size": "60px",
-            "line-height": _this._opt.div_height + _this._opt.unit,
-            "text-align": "center",
-            "color": "#ff0000",
+            "font-size": "14px",
+            "line-height": "30px",
+            "text-indent": "14px",
+            "color": "#000",
             "font-weight": "bold",
-            "display": "none",
-        }).addClass('pic_code_content').html('×').appendTo(outDiv);
+            "font-weight" : "normal"
+        }).addClass('pic_code_content').html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图').appendTo(_this.pic_fail_box);
+
     },
 
     //设置样式
@@ -260,17 +275,17 @@ var pic_code = {
     	pic_code.pic_code_line.css('width',pic_code._opt.div_width+company);
     	pic_code.pic_success.css('width',pic_code._opt.div_width+company);
     	pic_code.big_pic_img.css({'width':pic_code._opt.div_width+company,'height':pic_code._opt.div_height+company});
-    	pic_code.pic_success_mask.css({'width':pic_code._opt.div_width+company,'height':pic_code._opt.div_height+company});
+    	pic_code.pic_success_mask.css({'width':pic_code._opt.div_width+company});
     	//加载等待的样式
     	pic_code.pic_loading.css({'width':pic_code._opt.div_width+company,'height':pic_code._opt.div_height+company});
     	pic_code.pic_loading.find('img').css({'width':pic_code._opt.div_width+company,'height':pic_code._opt.div_height+company});
-        /*if (pic_code._opt.pic_mask){
-            $('#pic_code_mask').css('display','block');
-        }*/
     },
     
     // 换大图
     change_background_url: function() {
+        clearTimeout(pic_code.timer);
+        pic_code.pic_fail_box.animate({'top':'0px'},100);
+        
     	pic_code.pic_code_error_count.error=0;
     	pic_code.pic_code_circle.css('left','-5px');
     	pic_code.pic_code_line.html('按住左边滑块，拖动完成上方拼图');
@@ -299,6 +314,16 @@ var pic_code = {
 
     //验证失败小块滑回原位
     doMove : function(){
+        if (pic_code.pic_code_error_count.error < pic_code._opt.Callback_error_repeatedly_count){
+            pic_code.pic_fail.html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图');
+        }else {
+            pic_code.pic_fail.html('<span style="color:#ff0000">验证次数过多</span> : 系统将自动刷新验证码');
+        }
+        pic_code.pic_fail_box.animate({'top':'-30px'},100);
+        clearTimeout(pic_code.timer);
+        pic_code.timer = setTimeout(function(){
+            pic_code.pic_fail_box.animate({'top':'0px'},100);
+        },1000)
     	pic_code.pic_code_circle.animate({'left':'-5px'},300);
     	$('.pic_code .pic_bao div').eq(3).animate({'left':pic_code.params.left_begin+'px'},300);
 		pic_code.pic_code_line.html('按住左边滑块，拖动完成上方拼图');
@@ -363,11 +388,8 @@ var pic_code = {
         		else {
         			pic_code.pic_code_error_count.error+=1;
         			pic_code.pic_code_circle.unbind('mousedown touchstart');
-        			pic_code.pic_success_mask.css('display','block');
-                    pic_code.pic_fail.css('display','block');
+                    pic_code.doMove();
         			setTimeout(function(){
-        				pic_code.pic_success_mask.css('display','none');
-                        pic_code.pic_fail.css('display','none');
         				
         				if (pic_code.pic_code_error_count.error==pic_code._opt.Callback_error_repeatedly_count){
         					pic_code._opt.Callback_error_repeatedly();
@@ -397,6 +419,8 @@ var pic_code = {
         pic_code.delateDiv();
         pic_code.change_background_url();
         pic_code.oCircle_Click();
+        //clearTimeout(pic_code.timer);
+        //pic_code.pic_fail_box.animate({'top':'0px'},100);
     },
 
     // 创建小块
