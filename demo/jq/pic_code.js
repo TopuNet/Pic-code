@@ -151,7 +151,7 @@ var pic_code = {
         _this.big_pic_img = $(document.createElement('div')).css({
             "width": _this._opt.div_width + _this._opt.unit,
             "height": _this._opt.div_height + _this._opt.unit,
-        }).addClass('pic').html('<img src="/img/1.jpg" alt="图片" />').appendTo(_this.big_pic);
+        }).addClass('pic').html('<img src="" />').appendTo(_this.big_pic);
 
         //创建loading图片
         _this.pic_loading = $(document.createElement('div')).css({
@@ -161,7 +161,7 @@ var pic_code = {
             "left":0,
             "top": 0,
             "display": "none",
-        }).addClass('pic_loading').html('<img src="/img/pic_loading.gif" alt="图片" />').appendTo(_this.big_pic);
+        }).addClass('pic_loading').html('<img src="/inc/pic_loading.gif" />').appendTo(_this.big_pic);
 
         //创建刷新按钮
         _this.pic_code_fresh = $(document.createElement('div')).css({
@@ -261,7 +261,6 @@ var pic_code = {
             "line-height": "30px",
             "text-indent": "14px",
             "color": "#000",
-            "font-weight": "bold",
             "font-weight" : "normal"
         }).addClass('pic_code_content').html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图').appendTo(_this.pic_fail_box);
 
@@ -299,7 +298,8 @@ var pic_code = {
         	pic_code.pic_loading.css('display','none');
         	pic_code.big_pic_img.find('img').attr('src', img.src);   
         	pic_code.big_pic_img.find('img').css({'width':pic_code._opt.div_width+pic_code._opt.unit,'height':pic_code._opt.div_height+pic_code._opt.unit});   
-        	pic_code.create_div(); 
+        	pic_code.delateDiv();
+            pic_code.create_div(); 
         	pic_code.oCircle_Click();
         };
 
@@ -323,7 +323,7 @@ var pic_code = {
         clearTimeout(pic_code.timer);
         pic_code.timer = setTimeout(function(){
             pic_code.pic_fail_box.animate({'top':'0px'},100);
-        },1000)
+        },1000);
     	pic_code.pic_code_circle.animate({'left':'-5px'},300);
     	$('.pic_code .pic_bao div').eq(3).animate({'left':pic_code.params.left_begin+'px'},300);
 		pic_code.pic_code_line.html('按住左边滑块，拖动完成上方拼图');
@@ -347,18 +347,18 @@ var pic_code = {
         	//获取两个小块
         	var oDiv1=$('.pic_code .pic_bao div').eq(2);
         	var oDiv2=$('.pic_code .pic_bao div').eq(3);
-        	var oD_left=parseInt(oDiv1.css('left'));
-        	var disX=event.clientX-parseInt(oDiv2.css('left')) || event.originalEvent.changedTouches[0].pageX-parseInt(oDiv2.css('left'));
+        	var oD_left=parseInt(oDiv1.offset().left);
+        	var disX=event.clientX-parseInt(oDiv2.css('left')) || event.targetTouches[0].pageX-parseInt(oDiv2.css('left'));
         	//圆滑块的最大left值
-        	var oL_max_px=parseInt(pic_code.pic_code_line.css('width'))-parseInt(pic_code.pic_code_circle.css('width'));
+        	var oL_max_px=parseInt(pic_code.pic_code_line.width())-parseInt(pic_code.pic_code_circle.width());
         	//可动的小块的最大leftzhi
-        	var oDiv2_left_max_px=parseInt(pic_code.big_pic_img.css('width'))-parseInt(oDiv2.css('width'))-pic_code.params.left_begin-8;
+        	var oDiv2_left_max_px=parseInt(pic_code.big_pic_img.width())-parseInt(oDiv2.width())-pic_code.params.left_begin-8;
         	
             $(document).unbind('mousemove touchmove');
             $(document).unbind('mouseup touchend'); 
 
             $(document).on('mousemove touchmove',function(event){
-                var oL=event.clientX-disX || event.originalEvent.changedTouches[0].pageX-disX;
+                var oL=event.clientX-disX || event.targetTouches[0].pageX-disX;
                 if (oL>=10){
                     pic_code.pic_code_line.html('');
                 }else {
@@ -380,7 +380,7 @@ var pic_code = {
             
         	$(document).on('mouseup touchend',function(){
         		//验证成功的操作
-        		if(Math.abs(parseInt(oDiv2.css('left'))-oD_left)<=pic_code._opt.valid_range &&pic_code._opt.Callback_success){
+        		if(Math.abs(parseInt(oDiv2.offset().left)-oD_left)<=pic_code._opt.valid_range &&pic_code._opt.Callback_success){
         			pic_code._opt.Callback_success();
         			
         		}
@@ -391,7 +391,7 @@ var pic_code = {
                     pic_code.doMove();
         			setTimeout(function(){
         				
-        				if (pic_code.pic_code_error_count.error==pic_code._opt.Callback_error_repeatedly_count){
+        				if (pic_code.pic_code_error_count.error>=pic_code._opt.Callback_error_repeatedly_count){
         					pic_code._opt.Callback_error_repeatedly();
         				}else {
         					pic_code._opt.Callback_error();
