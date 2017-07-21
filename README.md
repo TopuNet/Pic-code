@@ -1,4 +1,4 @@
-Pic-code 图片验证码 v3.0.2
+Pic-code 图片验证码 v3.0.3
 ====
 
 
@@ -12,7 +12,6 @@ Pic-code 图片验证码 v3.0.2
     
     1.将pic_code.js文件放在jq中（原生规范）或widget/lib（AMD规范）中
     2.html创建验证码的外包盒子，确定验证码位置，将盒子class或者id传到opt中相应位置
-    3.页面中引用微信样式库weui.min.css
     
 ##页面引用：
         
@@ -30,28 +29,28 @@ Pic-code 图片验证码 v3.0.2
 
     var opt = {
         show_pic_code: '.show', //点击显示验证码的按钮class或id
-            pic_position: ".pic_code",//图片验证码外包层class或id
-            div_width: 300,//设置大图的默认宽
-            div_height: 100,//设置大图的默认高,宽高比是3:1，
-            valid_range: 20, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
-            unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
-            pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
-            Pic_mask_color: "#000", //验证码大遮罩层颜色
-            Pic_mask_opacity: 0.8, ////验证码大遮罩层透明度
-            Pic_click_key: true, //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏，默认true
-            Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域，默认false
-            Url_getPic: '/pic_code/get_aaa', //获取图片地址的接口，跨域请填写带域名的地址
-            url_submit: '/pic_code/valid_pic_code', //验证码，验证完成提交的地址，跨域请填写带域名的地址
-            Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
-                pic_code.doMove();
-            },
-            Callback_error_repeatedly: function () { // 多次验证失败回调，优先于Callback_error  默认事件pic_code.change_background_url();
-                pic_code.change_background_url();
-            },
-            Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数
-            Callback_success: function () { //验证成功回调，默认方法：pic_code.valid_success_callback()  
-                pic_code.valid_success_callback();
-            }
+        pic_position: ".pic_code",//图片验证码外包层class或id
+        div_width: 300,//设置大图的默认宽
+        div_height: 100,//设置大图的默认高,宽高比是3:1，
+        valid_range: 5, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
+        unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
+        pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
+        Pic_mask_color: "#000", //验证码大遮罩层颜色
+        Pic_mask_opacity: 0.8, ////验证码大遮罩层透明度
+        Pic_click_key: true, //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏
+        Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域
+        Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址
+        url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址
+        Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
+            pic_code.doMove();
+        },
+        Callback_error_repeatedly: function () { // 多次验证失败回调，优先于Callback_error  默认事件pic_code.change_background_url();
+            pic_code.change_background_url();
+        },
+        Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数
+        Callback_success: function () { //验证成功回调，默认方法：pic_code.valid_success_callback()  
+            pic_code.valid_success_callback();
+        }
     }
     
     pic_code.init(opt);
@@ -60,6 +59,11 @@ Pic-code 图片验证码 v3.0.2
 
 更新日志：
 -------------
+
+v3.0.2 - v3.0.3
+
+        1.修改loaning方式，不再使用微信的loading
+        2.修改验证码验证时的效果
 
 v3.0.1 - v3.0.2
 
