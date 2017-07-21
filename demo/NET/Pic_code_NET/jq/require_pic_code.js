@@ -4,8 +4,8 @@ require(["pic_code", "/inc/jquery.min.js"], function($pic_code) {
 		var opt = {
 		    show_pic_code: '.show', //点击显示验证码的按钮class或id
             pic_position: ".pic_code",//图片验证码外包层class或id
-            div_width: 300,//设置大图的默认宽
-            div_height: 100,//设置大图的默认高,宽高比是3:1，
+            div_width: 450,//设置大图的默认宽
+            div_height: 150,//设置大图的默认高,宽高比是3:1，
             valid_range: 5, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
             unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
             pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层

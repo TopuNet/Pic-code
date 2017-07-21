@@ -3,3 +3,8 @@ E:\Site\Pic_code_NET\Pic_code_NET\bin\Pic_code_NET.dll
 E:\Site\Pic_code_NET\Pic_code_NET\bin\Pic_code_NET.pdb
 E:\Site\Pic_code_NET\Pic_code_NET\obj\Debug\Pic_code_NET.dll
 E:\Site\Pic_code_NET\Pic_code_NET\obj\Debug\Pic_code_NET.pdb
+E:\Site\demo\NET\Pic_code_NET\bin\Pic_code_NET.dll
+E:\Site\demo\NET\Pic_code_NET\bin\Pic_code_NET.pdb
+E:\Site\demo\NET\Pic_code_NET\obj\Debug\Pic_code_NET.csprojResolveAssemblyReference.cache
+E:\Site\demo\NET\Pic_code_NET\obj\Debug\Pic_code_NET.dll
+E:\Site\demo\NET\Pic_code_NET\obj\Debug\Pic_code_NET.pdb

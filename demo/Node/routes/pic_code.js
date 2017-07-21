@@ -14,7 +14,7 @@ router.get("/", function (req, res) {
     res.render('../views/code.html');
 });
 
-router.post("/get_aaa", pic_code.Pic_code, function (req, res) {
+router.post("/get_pic_code", pic_code.Pic_code, function (req, res) {
     res.send(req.pic_code_result);
 });
 

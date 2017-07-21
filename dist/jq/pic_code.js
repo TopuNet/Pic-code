@@ -91,13 +91,6 @@ var pic_code = {
         $(pic_code._opt.show_pic_code).click(function () {
             pic_code.pic_code_show();
             pic_code.refresh_pic();
-            //设置点击大图换图片
-            if (pic_code._opt.Pic_click_key) {
-                pic_code.big_pic.unbind('click');
-                pic_code.big_pic.click(function () {
-                    pic_code.refresh_pic();
-                });
-            }
             //监听 刷新验证码按钮 点击事件
             pic_code.oRef_click();
         });
@@ -169,7 +162,6 @@ var pic_code = {
         _this.pic_code_fresh = $(document.createElement('div')).css({
             "width": "60px",
             "height": "20px",
-            "margin-top": "10px",
             "background": "#ddd",
             "line-height": "20px",
             "font-size": "12px",
@@ -179,13 +171,13 @@ var pic_code = {
             "border-radius": "10px",
             "float": "right",
             "position": "relative",
+            "top":"-20px"
         }).addClass('refresh').html("点击刷新").appendTo(outDiv);
 
         //创建滑块与轨道外包层
         _this.pic_code_liBao = $(document.createElement('div')).css({
             "width": _this._opt.div_width + _this._opt.unit,
             "height": "30px",
-            "margin-top": "10px",
             "position": "relative",
             "float": "left"
         }).addClass('line_bao').appendTo(outDiv);
@@ -266,15 +258,31 @@ var pic_code = {
             "font-weight": "normal"
         }).addClass('pic_code_content').html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图').appendTo(_this.pic_fail_box);
 
-        //创建loading
-        _this.loading = $(document.createElement('div')).css(
+        //创建loading(微信loading)
+        /*_this.loading = $(document.createElement('div')).css(
             "display", 'none'
             ).html('<div class="weui-mask_transparent"></div><div class="weui-toast"><i class="weui-loading weui-icon_toast"></i><p class="weui-toast__content" style="color:#fff;">数据处理中</p></div>').attr('id', 'loadingToast');
         if ($('#loadingToast').length === 0) {
             _this.loading.appendTo($('body'));
         } else {
             _this.loading = $('#loadingToast');
-        }
+        }*/
+        _this.loading = $(document.createElement('div')).css({
+            "display":'block',
+            "width": _this._opt.div_width + _this._opt.unit,
+            "height": _this._opt.div_height + _this._opt.unit,
+            "text-align":"center",
+            "line-height": _this._opt.div_height + _this._opt.unit,
+            "font-size": "16px",
+            "color": "#fff",
+            "position":"absolute",
+            "top":"0",
+            "left":"0",
+            "background":"#000",
+            "border":"2px solid #ccc",
+            "z-index":"1",
+            }).html('验证码生成中，请稍候').attr('id', 'loadingToast');
+        _this.loading.appendTo(_this.pic_box);
     },
 
     //设置样式
@@ -290,12 +298,14 @@ var pic_code = {
 
     // 换大图
     change_background_url: function () {
+        //取消滑块滑动事件
+        pic_code.Cancle_oCircle_Click();
         clearTimeout(pic_code.timer);
         pic_code.pic_fail_box.animate({ 'top': '0px' }, 100);
 
         pic_code.pic_code_error_count.error = 0;
         pic_code.pic_code_circle.css('left', '-5px');
-        pic_code.pic_code_line.html('按住左边滑块，拖动完成上方拼图');
+        pic_code.pic_code_line.css({"text-indent": "60px","text-align":"left"}).html('按住左边滑块，拖动完成上方拼图');
         pic_code.delateDiv();
         pic_code.loading.css('display', 'block');
         if (pic_code._opt.Is_Cross_domain) {
@@ -306,7 +316,7 @@ var pic_code = {
                     withCredentials: true
                 },
                 crossDomain: true,
-                type: 'get',
+                type: 'post',
                 data: {
 
                 },
@@ -315,19 +325,53 @@ var pic_code = {
                         data = $.parseJSON(data);
                     }
                     if (data.error == 'success' || data.error == 'SUCCESS') {
-                        pic_code.loading.css('display', 'none');
                         pic_code._opt.img1 = data.img2;
                         pic_code._opt.img2 = data.img1;
+                        pic_code.big_pic_img.find('img').attr('src', data.img2);
+                        pic_code.big_pic_img.find('img').css('width', '100%');
                         if (pic_code._opt.unit == 'vw') {
                             pic_code._opt.Y = data.Y / 300 * (pic_code._opt.div_height / 100 * $(window).width());
                         } else {
                             pic_code._opt.Y = data.Y / 300 * $('div.pic_bao').height();
                         }
-                        pic_code.big_pic_img.find('img').attr('src', data.img2);
-                        pic_code.big_pic_img.find('img').css('width', '100%');
-                        pic_code.delateDiv();
-                        pic_code.create_div();
-                        pic_code.oCircle_Click();
+                        /*var oImg = new Image(); 
+                        oImg.src=data.img2;
+                        oImg.onload = function(){
+                            pic_code.big_pic_img.css('display','block').find('img').attr('src', data.img2);
+                            pic_code.big_pic_img.find('img').css('width', '100%');
+                            pic_code.delateDiv();
+                            pic_code.create_div();
+                            pic_code.oCircle_Click();
+                            pic_code.loading.css('display', 'none');
+                        }*/
+
+                        var oImg_1 = new Image(); 
+                        oImg_1.src=data.img2;
+
+                        var oImg_2 = new Image(); 
+                        oImg_2.src=data.img1;
+
+                        var num = 0;
+                        var complete = function(){
+                            
+                            pic_code.delateDiv();
+                            pic_code.create_div();
+                            pic_code.oCircle_Click();
+                            pic_code.loading.css('display', 'none');
+                        };
+                        oImg_1.onload = function(){
+                            num++;
+                            if(num>=2){
+                                complete();
+                            }
+                            
+                        };
+                        oImg_2.onload = function(){
+                            num++;
+                            if(num>=2){
+                                complete();
+                            }
+                        };
                     }
                 }
             });
@@ -344,19 +388,57 @@ var pic_code = {
                         data = $.parseJSON(data);
                     }
                     if (data.error == 'success' || data.error == 'SUCCESS') {
-                        pic_code.loading.css('display', 'none');
                         pic_code._opt.img1 = data.img2;
                         pic_code._opt.img2 = data.img1;
+                        pic_code.big_pic_img.find('img').attr('src', data.img2);
+                        pic_code.big_pic_img.find('img').css('width', '100%');
                         if (pic_code._opt.unit == 'vw') {
                             pic_code._opt.Y = data.Y / 300 * (pic_code._opt.div_height / 100 * $(window).width());
                         } else {
                             pic_code._opt.Y = data.Y / 300 * $('div.pic_bao').height();
                         }
-                        pic_code.big_pic_img.find('img').attr('src', data.img2);
-                        pic_code.big_pic_img.find('img').css('width', '100%');
-                        pic_code.delateDiv();
-                        pic_code.create_div();
-                        pic_code.oCircle_Click();
+                        /*var oImg_1 = new Image(); 
+                        oImg_1.src=data.img2;
+
+                        var oImg_2 = new Image(); 
+                        oImg_2.src=data.img1;
+                        oImg_1.onload = function(){
+                            pic_code.big_pic_img.find('img').attr('src', data.img2);
+                            pic_code.big_pic_img.find('img').css('width', '100%');
+                            pic_code.delateDiv();
+                            pic_code.create_div();
+                            pic_code.oCircle_Click();
+                            pic_code.loading.css('display', 'none');
+                        }*/
+
+                        var oImg_1 = new Image(); 
+                        oImg_1.src=data.img2;
+
+                        var oImg_2 = new Image(); 
+                        oImg_2.src=data.img1;
+
+                        var num = 0;
+                        var complete = function(){
+                            
+                            pic_code.delateDiv();
+                            pic_code.create_div();
+                            pic_code.oCircle_Click();
+                            pic_code.loading.css('display', 'none');
+                        };
+                        oImg_1.onload = function(){
+                            num++;
+                            if(num>=2){
+                                complete();
+                            }
+                            
+                        };
+                        oImg_2.onload = function(){
+                            num++;
+                            if(num>=2){
+                                complete();
+                            }
+                        };
+                        
                     }
                 }
             });
@@ -366,6 +448,8 @@ var pic_code = {
 
     //验证失败小块滑回原位
     doMove: function () {
+        //取消滑块滑动事件
+        pic_code.Cancle_oCircle_Click();
         if (pic_code.pic_code_error_count.error < pic_code._opt.Callback_error_repeatedly_count) {
             pic_code.pic_fail.html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图');
         } else {
@@ -376,11 +460,15 @@ var pic_code = {
         pic_code.timer = setTimeout(function () {
             pic_code.pic_fail_box.animate({ 'top': '0px' }, 100);
         }, 1000);
-        pic_code.pic_code_circle.animate({ 'left': '-5px' }, 300);
+        pic_code.pic_code_circle.css({ 'left': '-5px','display':'block' });
+        //pic_code.pic_code_circle.animate({ 'left': '-5px' }, 300);
         $('.pic_code .pic_bao div').eq(1).animate({ 'left': pic_code.params.left_begin + 'px' }, 300);
-        pic_code.pic_code_line.html('按住左边滑块，拖动完成上方拼图');
+        pic_code.pic_code_line.css({"text-indent": "60px","text-align":"left"}).html('按住左边滑块，拖动完成上方拼图');
         setTimeout(function () {
+
             pic_code.oCircle_Click();
+            // 监听 刷新验证码按钮 点击事件
+            pic_code.oRef_click();
         }, 300);
     },
 
@@ -425,7 +513,7 @@ var pic_code = {
                 if (oL >= 10) {
                     pic_code.pic_code_line.html('');
                 } else {
-                    pic_code.pic_code_line.html('按住左边滑块，拖动完成上方拼图');
+                    pic_code.pic_code_line.css({"text-indent": "60px","text-align":"left"}).html('按住左边滑块，拖动完成上方拼图');
                 }
 
                 if (oL <= 0) {
@@ -441,7 +529,13 @@ var pic_code = {
 
             $(document).on('mouseup touchend', function () {
                 var dix_long = parseInt(parseInt(oDiv1.css('left')) / parseInt($('div.pic_bao').width()) * 900);
-                pic_code.loading.css('display', 'block');
+                pic_code.pic_code_line.css({"text-indent": "0px","text-align":"center"}).html('验证中，请稍候');
+                // 取消 刷新验证码按钮 点击事件
+                pic_code.Cancle_oRef_click();
+                //取消滑块的点击事件
+                pic_code.Cancle_oCircle_Click();
+                //滑块消失
+                pic_code.pic_code_circle.css('display', 'none');
                 if (pic_code._opt.Is_Cross_domain) {
                     $.ajax({
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -456,7 +550,6 @@ var pic_code = {
                             valid_range: pic_code._opt.valid_range
                         },
                         success: function (data) {
-                            pic_code.loading.css('display', 'none');
                             if (!data.error){
                                 data = $.parseJSON(data);
                             }
@@ -488,7 +581,6 @@ var pic_code = {
                             valid_range: pic_code._opt.valid_range
                         },
                         success: function (data) {
-                            pic_code.loading.css('display', 'none');
                             if (!data.error){
                                 data = $.parseJSON(data);
                             }
@@ -521,11 +613,24 @@ var pic_code = {
         });
     },
 
+    //取消滑块的点击事件
+    Cancle_oCircle_Click : function(){
+        pic_code.pic_code_circle.off('mousedown touchstart');
+    },
+
     // 监听 刷新验证码按钮 点击事件
     oRef_click: function () {
-        pic_code.pic_code_fresh.click(function () {
+        pic_code.pic_code_fresh.on('click',function () {
             pic_code.refresh_pic();
         });
+        pic_code.big_pic.on('click',function () {
+            pic_code.refresh_pic();
+        });
+    },
+    // 取消 刷新验证码按钮 点击事件
+    Cancle_oRef_click : function(){
+        pic_code.pic_code_fresh.off('click');
+        pic_code.big_pic.off('click');
     },
     //刷新验证码
     refresh_pic: function () {
@@ -534,7 +639,6 @@ var pic_code = {
         pic_code.pic_code_fresh.css('display', 'block');
         pic_code.delateDiv();
         pic_code.change_background_url();
-        pic_code.oCircle_Click();
     },
 
     // 创建小块

@@ -24,10 +24,10 @@ namespace Pic_code_final.Pic_code
 
             //以下四行允许跨域，跨域时允许携带请求凭证
             //Access-Control-Allow-Origin：允许来源，根据实际情况修改，必须为请求的地址，不能为*
-            context.Response.AddHeader("Access-Control-Allow-Origin", "http://192.168.1.92:82");
-            context.Response.AddHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
-            context.Response.AddHeader("Access-Control-Allow-Headers", "x-requested-with,content-type");
-            context.Response.AddHeader("Access-Control-Allow-Credentials", "true");
+            //context.Response.AddHeader("Access-Control-Allow-Origin", "http://192.168.1.92:82");
+            //context.Response.AddHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
+            //context.Response.AddHeader("Access-Control-Allow-Headers", "x-requested-with,content-type");
+            //context.Response.AddHeader("Access-Control-Allow-Credentials", "true");
 
             #region ==检查临时文件夹是否存在==
             DirectoryInfo di = new DirectoryInfo(context.Server.MapPath(temppath));
