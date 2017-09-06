@@ -2,13 +2,12 @@
 	白梦超
 	20160718
 	滑动图片验证码
-	版本 v3.0.4
+	版本 v3.0.6
 */
 
 //参数设置方法
 /*
 var t_opt = {
-    show_pic_code : '.show', //点击显示验证码的按钮class或id
     pic_position : ".pic_code" ,//图片验证码外包层class或id
     div_width: 90,//设置大图的默认宽
     div_height: 30,//设置大图的默认高，宽高比是3:1
@@ -41,7 +40,6 @@ var pic_code = {
     init: function (opt) {
         //设置默认参数
         var t_opt = {
-            show_pic_code: '.show', //点击显示验证码的按钮class或id
             pic_position: ".pic_code",//图片验证码外包层class或id
             div_width: 300,//设置大图的默认宽
             div_height: 100,//设置大图的默认高,宽高比是3:1，
@@ -106,10 +104,14 @@ var pic_code = {
         }
         //设置样式
         pic_code.set_style();
-        //进入页面换张图
-        //$(pic_code._opt.show_pic_code).click(function () {
-        //    pic_code.change_background_url();
-        //});
+    },
+
+    //显示验证码方法
+    open : function(){
+        pic_code.pic_code_show();
+        pic_code.refresh_pic();
+        //监听 刷新验证码按钮 点击事件
+        pic_code.oRef_click();
     },
 
     params: {
@@ -259,14 +261,6 @@ var pic_code = {
         }).addClass('pic_code_content').html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图').appendTo(_this.pic_fail_box);
 
         //创建loading(微信loading)
-        /*_this.loading = $(document.createElement('div')).css(
-            "display", 'none'
-            ).html('<div class="weui-mask_transparent"></div><div class="weui-toast"><i class="weui-loading weui-icon_toast"></i><p class="weui-toast__content" style="color:#fff;">数据处理中</p></div>').attr('id', 'loadingToast');
-        if ($('#loadingToast').length === 0) {
-            _this.loading.appendTo($('body'));
-        } else {
-            _this.loading = $('#loadingToast');
-        }*/
         _this.loading = $(document.createElement('div')).css({
             "display":'block',
             "width": _this._opt.div_width + _this._opt.unit,
@@ -298,6 +292,8 @@ var pic_code = {
 
     // 换大图
     change_background_url: function () {
+        //显示刷新按钮
+        pic_code.pic_code_fresh.css('visibility', 'visible');
         //取消滑块滑动事件
         pic_code.Cancle_oCircle_Click();
         clearTimeout(pic_code.timer);
@@ -450,6 +446,8 @@ var pic_code = {
     doMove: function () {
         //取消滑块滑动事件
         pic_code.Cancle_oCircle_Click();
+        //隐藏刷新按钮
+        pic_code.pic_code_fresh.css('visibility', 'hidden');
         if (pic_code.pic_code_error_count.error < pic_code._opt.Callback_error_repeatedly_count) {
             pic_code.pic_fail.html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图');
         } else {
@@ -459,6 +457,8 @@ var pic_code = {
         clearTimeout(pic_code.timer);
         pic_code.timer = setTimeout(function () {
             pic_code.pic_fail_box.animate({ 'top': '0px' }, 100);
+            //显示刷新按钮
+            pic_code.pic_code_fresh.css('visibility', 'visible');
         }, 1000);
         pic_code.pic_code_circle.css({ 'left': '-5px','display':'block' });
         //pic_code.pic_code_circle.animate({ 'left': '-5px' }, 300);
@@ -469,6 +469,7 @@ var pic_code = {
             pic_code.oCircle_Click();
             // 监听 刷新验证码按钮 点击事件
             pic_code.oRef_click();
+            
         }, 300);
     },
 
@@ -484,6 +485,8 @@ var pic_code = {
     // 监听 滑块点击和拖动
     oCircle_Click: function () {
         pic_code.pic_code_circle.on('mousedown touchstart', function (event) {
+            //隐藏刷新按钮
+            pic_code.pic_code_fresh.css('visibility', 'hidden');
             //获取小滑块
             var oDiv1 = $('.pic_code .pic_bao div').eq(1);
             //var oDiv2=$('.pic_code .pic_bao div').eq(3);

@@ -2,7 +2,6 @@ require(["pic_code", "/inc/jquery.min.js"], function($pic_code) {
 
     $(function(){
 		var opt = {
-		    show_pic_code: '.show', //点击显示验证码的按钮class或id
             pic_position: ".pic_code",//图片验证码外包层class或id
             div_width: 450,//设置大图的默认宽
             div_height: 150,//设置大图的默认高,宽高比是3:1，
@@ -26,6 +25,9 @@ require(["pic_code", "/inc/jquery.min.js"], function($pic_code) {
                 pic_code.valid_success_callback();
             }
 		}
-		$pic_code.init(opt)
+		$pic_code.init(opt);
+        $('.show').click(function(){
+            pic_code.open();
+        })
 	})
 });

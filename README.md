@@ -1,4 +1,4 @@
-Pic-code 图片验证码 v3.0.3
+Pic-code 图片验证码 v3.0.6
 ====
 
 
@@ -28,10 +28,9 @@ Pic-code 图片验证码 v3.0.3
 ##功能配置及启用：
 
     var opt = {
-        show_pic_code: '.show', //点击显示验证码的按钮class或id
         pic_position: ".pic_code",//图片验证码外包层class或id
-        div_width: 300,//设置大图的默认宽
-        div_height: 100,//设置大图的默认高,宽高比是3:1，
+        div_width: 450,//设置大图的默认宽
+        div_height: 150,//设置大图的默认高,宽高比是3:1，
         valid_range: 5, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
         unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
         pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
@@ -52,13 +51,22 @@ Pic-code 图片验证码 v3.0.3
             pic_code.valid_success_callback();
         }
     }
-    
-    pic_code.init(opt);
+
+    $pic_code.init(opt);
+    $('.show').click(function(){
+        pic_code.open();
+    })
 
 
 
 更新日志：
 -------------
+
+v3.0.4 - v3.0.6
+
+        1.添加外部显示验证码调用方法（open）
+        2.修改调用方法，init之后不再直接显示验证码，需自行调用open方法显示
+        3.修改刷新按钮的显示机智，滑动滑块的时候刷新按钮自动隐藏
 
 v3.0.3 - v3.0.4
 
