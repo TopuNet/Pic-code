@@ -2,7 +2,7 @@
 	白梦超
 	20160718
 	滑动图片验证码
-	版本 v3.0.6
+	版本 v3.0.7
 */
 
 //参数设置方法
@@ -506,6 +506,8 @@ var pic_code = {
             $(document).unbind('mouseup touchend');
 
             $(document).on('mousemove touchmove', function (event) {
+                //隐藏刷新按钮
+                pic_code.pic_code_fresh.css('visibility', 'hidden');
                 var oL = 0;
                 if (event.originalEvent) {
                     oL = event.clientX - disX || event.originalEvent.targetTouches[0].pageX - disX;
