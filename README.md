@@ -1,4 +1,4 @@
-Pic-code 图片验证码 v3.0.7
+Pic-code 图片验证码 v3.1.0
 ====
 
 
@@ -29,8 +29,10 @@ Pic-code 图片验证码 v3.0.7
 
     var opt = {
         pic_position: ".pic_code",//图片验证码外包层class或id
-        div_width: 450,//设置大图的默认宽
-        div_height: 150,//设置大图的默认高,宽高比是3:1，
+        pic_original_width: 900, //图片原始大小
+        pic_small_width: 100, //隐形小图的宽（正方形的小图）
+        div_width: 600,//设置大图的默认宽
+        div_height: 200,//设置大图的默认高,宽高比是3:1，
         valid_range: 5, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
         unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
         pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
@@ -53,14 +55,29 @@ Pic-code 图片验证码 v3.0.7
     }
 
     $pic_code.init(opt);
+    //设置验证码显示方法
     $('.show').click(function(){
         pic_code.open();
     })
+
+##外部调用方法：
+    
+    pic_code.open();  //显示验证码
+
+    pic_code.pic_code_hide();  //隐藏验证码 
+
 
 
 
 更新日志：
 -------------
+v3.0.6 - v3.1.0
+
+        1.pic_original_width: 900，添加图片原始尺寸宽
+        2.pic_small_width: 100，添加阴影部分小图的宽
+        3.z_index: 800，添加设置元素z-index方法
+        4.pic_position: ".pic_code"（图片验证码外包层class或id），删除此参数
+
 v3.0.6 - v3.0.7
 
         1.修改刷新按钮显示隐藏的bug

@@ -2,7 +2,7 @@
 	白梦超
 	20160718
 	滑动图片验证码
-	版本 v3.0.7
+	版本 v3.1.0
 */
 
 //参数设置方法
@@ -41,8 +41,10 @@ var pic_code = {
         //设置默认参数
         var t_opt = {
             pic_position: ".pic_code",//图片验证码外包层class或id
-            div_width: 300,//设置大图的默认宽
-            div_height: 100,//设置大图的默认高,宽高比是3:1，
+            pic_original_width: 900, //图片原始大小(以px为单位)，默认900
+            pic_small_width: 100, //隐形小图的宽（正方形的小图，以px为单位），默认100
+            div_width: 300,//设置现实的大图的默认宽
+            div_height: 100,//设置显示的大图的默认高
             valid_range: 5, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
             unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
             pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
@@ -52,25 +54,33 @@ var pic_code = {
             Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域
             Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址
             url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址
+            z_index: 800, //设置标签z_index
             Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
-                pic_code.doMove();
+                //pic_code.doMove();
             },
             Callback_error_repeatedly: function () { // 多次验证失败回调，优先于Callback_error  默认事件pic_code.change_background_url();
-                pic_code.change_background_url();
+                //pic_code.change_background_url();
             },
             Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数
             Callback_success: function () { //验证成功回调，默认方法：pic_code.valid_success_callback()  
-                pic_code.valid_success_callback();
+                //pic_code.valid_success_callback();
             }
         };
 
         pic_code._opt = $.extend(t_opt, opt);
+        //计算比例
+        if(pic_code._opt.unit == 'vw'){
+            pic_code._opt.Proportion = (pic_code._opt.pic_original_width/10)/pic_code._opt.div_width;
+        }else {
+            pic_code._opt.Proportion = pic_code._opt.pic_original_width/pic_code._opt.div_width;
+        }
+        
         //设置小图的高度默认是大图宽度的1/5
         pic_code._opt.crop_div = pic_code._opt.div_width / 9;
         //控制验证码最大宽度
         if (pic_code._opt.unit == 'vw' && pic_code._opt.div_width / 100 * $(window).width() > 600) {
             pic_code._opt.div_width = 600;
-            pic_code._opt.div_height = 200;
+            pic_code._opt.div_height = 400;
             pic_code._opt.unit = 'px';
             pic_code._opt.crop_div = parseInt(pic_code._opt.div_width / 9);
         }
@@ -137,6 +147,7 @@ var pic_code = {
             "opacity": pic_code._opt.Pic_mask_opacity,
             "filter": "alpha(opacity=" + (pic_code._opt.Pic_mask_opacity * 100) + ")",
             "display": "none",
+            "z-index": pic_code._opt.z_index
         }).attr('id', 'pic_code_mask');
         outDiv.before(_this.pic_code_bg);
 
@@ -145,19 +156,22 @@ var pic_code = {
             "width": _this._opt.div_width + _this._opt.unit,
             "height": _this._opt.div_height + _this._opt.unit,
             "overflow": "hidden",
-            "position": "relative"
+            "position": "relative",
+            "z-index": pic_code._opt.z_index
         }).addClass('pic_box').appendTo(outDiv);
 
         //创建大图外包
         _this.big_pic = $(document.createElement('div')).css({
             "width": _this._opt.div_width + _this._opt.unit,
             "position": "relative",
+            "z-index": pic_code._opt.z_index
         }).addClass('pic_bao').appendTo(_this.pic_box);
 
         //创建大图div
         _this.big_pic_img = $(document.createElement('div')).css({
             "width": _this._opt.div_width + _this._opt.unit,
             "height": _this._opt.div_height + _this._opt.unit,
+            "z-index": pic_code._opt.z_index
         }).addClass('pic').html('<img src="" />').appendTo(_this.big_pic);
 
         //创建刷新按钮
@@ -173,7 +187,8 @@ var pic_code = {
             "border-radius": "10px",
             "float": "right",
             "position": "relative",
-            "top":"-20px"
+            "top":"-20px",
+            "z-index": pic_code._opt.z_index
         }).addClass('refresh').html("点击刷新").appendTo(outDiv);
 
         //创建滑块与轨道外包层
@@ -181,7 +196,8 @@ var pic_code = {
             "width": _this._opt.div_width + _this._opt.unit,
             "height": "30px",
             "position": "relative",
-            "float": "left"
+            "float": "left",
+            "z-index": pic_code._opt.z_index
         }).addClass('line_bao').appendTo(outDiv);
 
         //创建滑块轨道
@@ -195,6 +211,7 @@ var pic_code = {
             "line-height": "30px",
             "text-indent": "60px",
             "overflow": "hidden",
+            "z-index": pic_code._opt.z_index
         }).addClass('line').appendTo(_this.pic_code_liBao);
 
         //创建圆滑块
@@ -207,6 +224,7 @@ var pic_code = {
             "top": "-35px",
             "left": "0px",
             "cursor": "pointer",
+            "z-index": pic_code._opt.z_index
         }).addClass('circle').appendTo(_this.pic_code_liBao);
 
         //创建成功提示信息
@@ -222,6 +240,7 @@ var pic_code = {
             "text-align": "center",
             "margin-top": "20px",
             "display": "none",
+            "z-index": pic_code._opt.z_index
         }).addClass('success').html('验证成功').appendTo(outDiv);
 
         //创建验证失败盒子
@@ -229,7 +248,8 @@ var pic_code = {
             "width": _this._opt.div_width + _this._opt.unit,
             "height": "30px",
             "overflow": "hidden",
-            "position": "relative"
+            "position": "relative",
+            "z-index": pic_code._opt.z_index
         }).addClass('pic_fail_box').appendTo(_this.pic_box);
 
         //创建提示信息遮罩层
@@ -244,6 +264,7 @@ var pic_code = {
             "line-height": "160px",
             "text-align": "center",
             "font-weight": "bold",
+            "z-index": pic_code._opt.z_index
         }).addClass('pic_code_mask').appendTo(_this.pic_fail_box);
 
         //创建失败提示信息
@@ -257,7 +278,8 @@ var pic_code = {
             "line-height": "30px",
             "text-indent": "14px",
             "color": "#000",
-            "font-weight": "normal"
+            "font-weight": "normal",
+            "z-index": pic_code._opt.z_index
         }).addClass('pic_code_content').html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图').appendTo(_this.pic_fail_box);
 
         //创建loading(微信loading)
@@ -274,7 +296,7 @@ var pic_code = {
             "left":"0",
             "background":"#000",
             "border":"2px solid #ccc",
-            "z-index":"1",
+            "z-index": (pic_code._opt.z_index+1)
             }).html('验证码生成中，请稍候').attr('id', 'loadingToast');
         _this.loading.appendTo(_this.pic_box);
     },
@@ -292,6 +314,8 @@ var pic_code = {
 
     // 换大图
     change_background_url: function () {
+        //显示滑块
+        pic_code.pic_code_circle.css({ 'left': '-5px','display':'block' });
         //显示刷新按钮
         pic_code.pic_code_fresh.css('visibility', 'visible');
         //取消滑块滑动事件
@@ -325,11 +349,11 @@ var pic_code = {
                         pic_code._opt.img2 = data.img1;
                         pic_code.big_pic_img.find('img').attr('src', data.img2);
                         pic_code.big_pic_img.find('img').css('width', '100%');
-                        if (pic_code._opt.unit == 'vw') {
-                            pic_code._opt.Y = data.Y / 300 * (pic_code._opt.div_height / 100 * $(window).width());
-                        } else {
-                            pic_code._opt.Y = data.Y / 300 * $('div.pic_bao').height();
-                        }
+                        // if (pic_code._opt.unit == 'vw') {
+                        //     pic_code._opt.Y = data.Y / 300 * (pic_code._opt.div_height / 100 * $(window).width());
+                        // } else {
+                            pic_code._opt.Y = data.Y / pic_code._opt.Proportion;
+                        //}
                         /*var oImg = new Image(); 
                         oImg.src=data.img2;
                         oImg.onload = function(){
@@ -388,11 +412,11 @@ var pic_code = {
                         pic_code._opt.img2 = data.img1;
                         pic_code.big_pic_img.find('img').attr('src', data.img2);
                         pic_code.big_pic_img.find('img').css('width', '100%');
-                        if (pic_code._opt.unit == 'vw') {
-                            pic_code._opt.Y = data.Y / 300 * (pic_code._opt.div_height / 100 * $(window).width());
-                        } else {
-                            pic_code._opt.Y = data.Y / 300 * $('div.pic_bao').height();
-                        }
+                        // if (pic_code._opt.unit == 'vw') {
+                        //     pic_code._opt.Y = data.Y / 300 * (pic_code._opt.div_height / 100 * $(window).width());
+                        // } else {
+                            pic_code._opt.Y = data.Y / pic_code._opt.Proportion;
+                        //}
                         /*var oImg_1 = new Image(); 
                         oImg_1.src=data.img2;
 
@@ -533,7 +557,7 @@ var pic_code = {
             });
 
             $(document).on('mouseup touchend', function () {
-                var dix_long = parseInt(parseInt(oDiv1.css('left')) / parseInt($('div.pic_bao').width()) * 900);
+                var dix_long = parseInt(parseInt(oDiv1.css('left'))*pic_code._opt.Proportion);
                 pic_code.pic_code_line.css({"text-indent": "0px","text-align":"center"}).html('验证中，请稍候');
                 // 取消 刷新验证码按钮 点击事件
                 pic_code.Cancle_oRef_click();
@@ -650,7 +674,9 @@ var pic_code = {
     create_div: function () {
         var oDiv1 = $('<div></div>');
         oDiv1.appendTo(pic_code.big_pic);
-        oDiv1.css({ 'width': pic_code._opt.crop_div + pic_code._opt.unit, 'height': pic_code._opt.crop_div + pic_code._opt.unit, 'position': 'absolute', 'left': pic_code.params.left_begin + 'px', 'top': pic_code._opt.Y + 'px', 'overflow': 'hidden', 'box-shadow': '0px 0px 3px 3px yellow inset,0px 0px 3px 3px yellow' });
+        console.log(pic_code.pic_small_width)
+        console.log(pic_code._opt.Proportion)
+        oDiv1.css({ 'width': pic_code._opt.pic_small_width/pic_code._opt.Proportion, 'height': pic_code._opt.pic_small_width/pic_code._opt.Proportion, 'position': 'absolute', 'left': pic_code.params.left_begin + 'px', 'top': pic_code._opt.Y + 'px', 'overflow': 'hidden', 'box-shadow': '0px 0px 3px 3px yellow inset,0px 0px 3px 3px yellow' });
         oDiv1.html('<img src=' + pic_code._opt.img2 + ' style="width: 100%">');
     },
 
