@@ -2,7 +2,7 @@
 	白梦超
 	20160718
 	滑动图片验证码
-	版本 v3.1.0
+	版本 v3.0.7
 */
 
 //参数设置方法
@@ -89,7 +89,7 @@ var pic_code = {
         pic_code.create_dom();
 
         //设置外包层宽
-        $(pic_code._opt.pic_position).css('width', pic_code._opt.div_width + pic_code._opt.unit);
+        $(pic_code._opt.pic_position).css({'width':pic_code._opt.div_width + pic_code._opt.unit,'z-index': pic_code._opt.z_index});
 
         pic_code.dom_obj = {
             oPicCode: $(pic_code._opt.pic_position)    //验证码最外面一层
@@ -279,6 +279,7 @@ var pic_code = {
             "text-indent": "14px",
             "color": "#000",
             "font-weight": "normal",
+            "text-align": "left",
             "z-index": pic_code._opt.z_index
         }).addClass('pic_code_content').html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图').appendTo(_this.pic_fail_box);
 
@@ -674,8 +675,6 @@ var pic_code = {
     create_div: function () {
         var oDiv1 = $('<div></div>');
         oDiv1.appendTo(pic_code.big_pic);
-        console.log(pic_code.pic_small_width)
-        console.log(pic_code._opt.Proportion)
         oDiv1.css({ 'width': pic_code._opt.pic_small_width/pic_code._opt.Proportion, 'height': pic_code._opt.pic_small_width/pic_code._opt.Proportion, 'position': 'absolute', 'left': pic_code.params.left_begin + 'px', 'top': pic_code._opt.Y + 'px', 'overflow': 'hidden', 'box-shadow': '0px 0px 3px 3px yellow inset,0px 0px 3px 3px yellow' });
         oDiv1.html('<img src=' + pic_code._opt.img2 + ' style="width: 100%">');
     },
