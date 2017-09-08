@@ -2,7 +2,7 @@
 	白梦超
 	20160718
 	滑动图片验证码
-	版本 v3.0.7
+	版本 v3.1.1
 */
 
 //参数设置方法
@@ -94,14 +94,6 @@ var pic_code = {
         pic_code.dom_obj = {
             oPicCode: $(pic_code._opt.pic_position)    //验证码最外面一层
         };
-
-        //监听显示验证码按钮点击
-        $(pic_code._opt.show_pic_code).click(function () {
-            pic_code.pic_code_show();
-            pic_code.refresh_pic();
-            //监听 刷新验证码按钮 点击事件
-            pic_code.oRef_click();
-        });
 
         //点击弹层验证码消失
         $('#pic_code_mask').click(function () {
@@ -379,6 +371,8 @@ var pic_code = {
                             pic_code.create_div();
                             pic_code.oCircle_Click();
                             pic_code.loading.css('display', 'none');
+                            // 监听 刷新验证码按钮 点击事件
+                            pic_code.oRef_click();
                         };
                         oImg_1.onload = function(){
                             num++;
@@ -445,6 +439,8 @@ var pic_code = {
                             pic_code.create_div();
                             pic_code.oCircle_Click();
                             pic_code.loading.css('display', 'none');
+                            // 监听 刷新验证码按钮 点击事件
+                            pic_code.oRef_click();
                         };
                         oImg_1.onload = function(){
                             num++;
@@ -650,6 +646,9 @@ var pic_code = {
 
     // 监听 刷新验证码按钮 点击事件
     oRef_click: function () {
+        // 取消 刷新验证码按钮 点击事件
+        pic_code.Cancle_oRef_click();
+
         pic_code.pic_code_fresh.on('click',function () {
             pic_code.refresh_pic();
         });
@@ -664,6 +663,8 @@ var pic_code = {
     },
     //刷新验证码
     refresh_pic: function () {
+        // 取消 刷新验证码按钮 点击事件
+        pic_code.Cancle_oRef_click();
         pic_code.pic_success.css('display', 'none');
         pic_code.pic_code_liBao.css('display', 'block');
         pic_code.pic_code_fresh.css('display', 'block');
