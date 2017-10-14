@@ -44,9 +44,18 @@ namespace Pic_code_final.Pic_code
             }
             #endregion
 
+            #region ==遍历验证码底图库中的图片==
+            FileInfo[] fi = di1.GetFiles("p*");
+			if (fi.Length == 0)
+			{
+				context.Response.Write("{\"error\":\"ERROR\",\"msg\":\"验证码底图不存在\"}");
+				context.Response.End();
+            }
+            #endregion
+
             Random r = new Random();
             //随机一张底图
-            string FromFilePath = context.Server.MapPath(captchapath + r.Next(1, 8).ToString() + ".jpg");
+            string FromFilePath = context.Server.MapPath(captchapath + "p" + r.Next(1, fi.Length + 1).ToString() + ".jpg");
             //小图保存路径
             string saveFilePath = temppath + DateTime.Now.ToString("yyyyMMdd") + r.Next(1000, 5555).ToString() + ".jpg";
             //带水印的原图保存路径
