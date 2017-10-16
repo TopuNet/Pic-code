@@ -94,6 +94,8 @@ namespace Pic_code_final.Pic_code
 
             int width = waterImage.Width;//水印图片的宽
             int height = waterImage.Height;//水印图片的高
+            int FromImage_width = FromImage.Width;
+            int FromImage_height = FromImage.Height;
             int max_width = FromImage.Width - width - i;//水印左上角的横坐标范围
             int max_height = FromImage.Height - height - i;//水印左上角的纵坐标范围
 
@@ -145,8 +147,8 @@ namespace Pic_code_final.Pic_code
             string url = "http://" + HttpContext.Current.Request.Url.Authority;
             #endregion
 
-            return "{\"error\":\"SUCCESS\",\"Y\":\"" + y + "\",\"img1\":\"" + url + saveFilePath1 + "\",\"img2\":\"" + url + saveFilePath2 + "\"}";
-
+            return "{\"error\":\"SUCCESS\",\"original_width\":\"" + FromImage_width + "\",\"original_height\":\"" + FromImage_height + "\",\"water_width\":\"" + waterImage.Width + "\",\"water_height\":\"" + waterImage.Height + "\",\"Y\":\"" + y + "\",\"img1\":\"" + url + saveFilePath1 + "\",\"img2\":\"" + url + saveFilePath2 + "\"}";
+            //return FromImage_width.ToString();
         }
 
         public bool IsReusable

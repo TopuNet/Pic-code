@@ -20,6 +20,10 @@
             /*
                 @result: {
                     "error": "SUCCESS", // SUCCESS | ERROR
+                    "original_width": 900, // 原图宽度(px)
+                    "original_height": 300, // 原图高度(px)
+                    "water_width": 100, // 水印图宽度(px)
+                    "water_height": 100, // 水印图高度(px)
                     "Y": "38", // error=SUCCESS时有效。水印小图的纵坐标，px
                     "img1": "/UploadFile/temp/201705251429.jpg", // error=SUCCESS时有效。水印小图路径
                     "img2": "/UploadFile/temp/201705257931.jpg", // error=SUCCESS时有效。底图路径

@@ -1,5 +1,5 @@
 /*
-	index路由
+    index路由
 */
 
 var router = require("express").Router(),
@@ -229,6 +229,10 @@ router.post("/create", function(req, res) {
         } else {
             return_obj = {
                 error: "SUCCESS",
+                original_width: image_ori_size.width,
+                original_height: image_ori_size.height,
+                water_width: image_water_size.width,
+                water_height: image_water_size.height,
                 Y: image_crop_pos.y,
                 img1: saveDir[1].substring(1) + image_crop_fp + image_ori_ext,
                 img2: saveDir[1].substring(1) + image_new_fp + image_ori_ext
