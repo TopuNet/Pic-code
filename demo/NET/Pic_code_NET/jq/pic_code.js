@@ -399,6 +399,7 @@ var pic_code = {
 
                 },
                 success: function (data) {
+                console.log(data);
                     if (!data.error){
                         data = $.parseJSON(data);
                     }

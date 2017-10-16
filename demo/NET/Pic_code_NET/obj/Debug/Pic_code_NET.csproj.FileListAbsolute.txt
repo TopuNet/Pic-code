@@ -12,4 +12,4 @@ E:/Site/demo/NET/Pic_code_NET/obj/Debug/Pic_code_NET.pdb
 /Users/agulado/Projects/Git/pic_code_bai/demo/NET/Pic_code_NET/obj/Debug/Pic_code_NET.csprojResolveAssemblyReference.cache
 /Users/agulado/Projects/Git/pic_code_bai/demo/NET/Pic_code_NET/obj/Debug/Pic_code_NET.dll
 /Users/agulado/Projects/Git/pic_code_bai/demo/NET/Pic_code_NET/obj/Debug/Pic_code_NET.dll.mdb
-/Users/agulado/Projects/Git/pic_code_bai/demo/NET/Pic_code_NET/bin/Pic_code_NET.dll.mdb
+/Users/agulado/Projects/Git/pic_code_bai/demo/NET/Pic_code_NET/bin/obj/Debug/Pic_code_NET.dll.mdb
