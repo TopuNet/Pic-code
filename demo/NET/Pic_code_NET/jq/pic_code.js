@@ -2,32 +2,38 @@
 	白梦超
 	20160718
 	滑动图片验证码
-	版本 v3.1.1
+	版本 v3.2.0
 */
 
 //参数设置方法
 /*
 var t_opt = {
-    pic_position : ".pic_code" ,//图片验证码外包层class或id
-    div_width: 90,//设置大图的默认宽
-    div_height: 30,//设置大图的默认高，宽高比是3:1
-    valid_range: 8, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
-    unit: "vw", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
-    pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
-    Pic_mask_color : "#000", //验证码大遮罩层颜色
-    Pic_mask_opacity : 0.8, ////验证码大遮罩层透明度
-    Pic_click_key : "ture", //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏
-    Url_getPic: '/Pic_code/Pic_code.aspx', //获取图片地址的接口
-    url_submit : '/Login.ashx', //验证码，验证完成提交的地址
-    Callback_error: function() { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
-        pic_code.doMove();
-    }, 
-    Callback_error_repeatedly: function() { // 多次验证失败回调，优先于Callback_error  默认事件pic_code.change_background_url();
-        pic_code.change_background_url();
-    }, 
+    pic_position: ".pic_code",//图片验证码外包层class或id
+    pic_original_width: , //图片原始宽(以px为单位,后台传过来的值)，
+    pic_original_height: , //图片原始高(以px为单位,后台传过来的值)，
+    pic_small_width: , //水印小图的宽（以px为单位,后台传过来的值）
+    pic_small_height: , //水印小图的宽（以px为单位,后台传过来的值）
+    div_width: 300,//显示图片的宽，默认300px
+    div_height: ,//显示图片的高，通过计算得来的（初始的默认值是显示图片的宽的一半）
+    valid_range: 5, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
+    unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
+    pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层，默认true
+    Pic_mask_color: "#000", //验证码大遮罩层颜色，默认黑色
+    Pic_mask_opacity: 0.8, ////验证码大遮罩层透明度，默认0.8
+    Pic_click_key: true, //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏，默认true
+    Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域，默认false
+    Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址，默认/Pic_code/Pic_code.ashx
+    url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址，默认/Pic_code/Pic_code_valid.ashx
+    z_index: 800, //设置标签z_index，默认800
+    Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
+        //pic_code.doMove();
+    },
+    Callback_error_repeatedly: function () { // 多次验证失败回调，刷新验证码重新验证，优先于Callback_error  默认事件pic_code.change_background_url();
+        //pic_code.change_background_url();
+    },
     Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数
-    Callback_success: function() { //验证成功回调，默认方法：pic_code.valid_success_callback()  
-        pic_code.valid_success_callback();
+    Callback_success: function () { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()  
+        //pic_code.valid_success_callback();
     }
 }
 */
@@ -40,60 +46,56 @@ var pic_code = {
     init: function (opt) {
         //设置默认参数
         var t_opt = {
-            pic_position: ".pic_code",//图片验证码外包层class或id
-            pic_original_width: 900, //图片原始大小(以px为单位)，默认900
-            pic_small_width: 100, //隐形小图的宽（正方形的小图，以px为单位），默认100
-            div_width: 300,//设置现实的大图的默认宽
-            div_height: 100,//设置显示的大图的默认高
+            pic_position: ".pic_code",//图片验证码外包层class或id，默认.pic_code
+            div_width: 300,//设置显示的大图的宽，默认300
             valid_range: 5, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
             unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
-            pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层
-            Pic_mask_color: "#000", //验证码大遮罩层颜色
-            Pic_mask_opacity: 0.8, ////验证码大遮罩层透明度
-            Pic_click_key: true, //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏
-            Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域
-            Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址
-            url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址
-            z_index: 800, //设置标签z_index
-            Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
-                //pic_code.doMove();
+            pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层，默认true
+            Pic_mask_color: "#000", //验证码大遮罩层颜色，默认黑色
+            Pic_mask_opacity: 0.8, ////验证码大遮罩层透明度，默认0.8
+            Pic_click_key: true, //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏，默认true
+            Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域，默认false
+            Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址，默认'/Pic_code/Pic_code.ashx'
+            url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
+            z_index: 800, //设置标签z_index，默认800
+            position_default: true, //验证码是否居中显示，true-居中显示，false-自定义显示位置，默认true
+            Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();
+                pic_code.doMove();
             },
-            Callback_error_repeatedly: function () { // 多次验证失败回调，优先于Callback_error  默认事件pic_code.change_background_url();
-                //pic_code.change_background_url();
+            Callback_error_repeatedly: function () { // 多次验证失败回调，刷新验证码重新验证，优先于Callback_error  默认事件pic_code.change_background_url();
+                pic_code.change_background_url();
             },
-            Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数
-            Callback_success: function () { //验证成功回调，默认方法：pic_code.valid_success_callback()  
-                //pic_code.valid_success_callback();
+            Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数，默认3
+            Callback_success: function () { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()  
+                pic_code.valid_success_callback();
             }
         };
 
+        //初始化数据
         pic_code._opt = $.extend(t_opt, opt);
-        //计算比例
-        if(pic_code._opt.unit == 'vw'){
-            pic_code._opt.Proportion = (pic_code._opt.pic_original_width/10)/pic_code._opt.div_width;
-        }else {
-            pic_code._opt.Proportion = pic_code._opt.pic_original_width/pic_code._opt.div_width;
-        }
-        
-        //设置小图的高度默认是大图宽度的1/5
-        pic_code._opt.crop_div = pic_code._opt.div_width / 9;
-        //控制验证码最大宽度
-        if (pic_code._opt.unit == 'vw' && pic_code._opt.div_width / 100 * $(window).width() > 600) {
-            pic_code._opt.div_width = 600;
-            pic_code._opt.div_height = 400;
+        //单位换换
+        if (pic_code._opt.unit == 'vw'){
+            pic_code._opt.div_width = pic_code._opt.div_width/100*$(window).width();
             pic_code._opt.unit = 'px';
-            pic_code._opt.crop_div = parseInt(pic_code._opt.div_width / 9);
         }
+        //设置验证码初始的默认高度
+        pic_code._opt.div_height = pic_code._opt.div_width;
 
         //创建dom
         pic_code.create_dom();
 
         //设置外包层宽
         $(pic_code._opt.pic_position).css({'width':pic_code._opt.div_width + pic_code._opt.unit,'z-index': pic_code._opt.z_index});
-
         pic_code.dom_obj = {
             oPicCode: $(pic_code._opt.pic_position)    //验证码最外面一层
         };
+        //设置验证码默认显示位置
+        if (pic_code._opt.position_default){
+            //设置验证码的位置
+            pic_code.dom_obj.oPicCode.css({'position':'fixed','top':'50%','left':'50%'});                            
+            pic_code.dom_obj.oPicCode.css({'margin-top':-(pic_code._opt.div_height+50)/2,'margin-left':-pic_code._opt.div_width/2});
+        }
+        
 
         //点击弹层验证码消失
         $('#pic_code_mask').click(function () {
@@ -275,7 +277,7 @@ var pic_code = {
             "z-index": pic_code._opt.z_index
         }).addClass('pic_code_content').html('<span style="color:#ff0000">验证失败</span> : 拖动滑块，完成正确拼图').appendTo(_this.pic_fail_box);
 
-        //创建loading(微信loading)
+        //创建loading
         _this.loading = $(document.createElement('div')).css({
             "display":'block',
             "width": _this._opt.div_width + _this._opt.unit,
@@ -303,6 +305,12 @@ var pic_code = {
         pic_code.pic_success.css('width', pic_code._opt.div_width + company);
         pic_code.big_pic_img.css({ 'width': pic_code._opt.div_width + company, 'height': pic_code._opt.div_height + company });
         pic_code.pic_success_mask.css({ 'width': pic_code._opt.div_width + company });
+        //设置验证码盒子高度
+        pic_code.pic_box.css('height',pic_code._opt.div_height);
+        //设置大图div高
+        pic_code.big_pic_img.css('height',pic_code._opt.div_height);
+        //设置loaning高度
+        pic_code.loading.css({'height':pic_code._opt.div_height,'line-height':pic_code._opt.div_height + pic_code._opt.unit});
     },
 
     // 换大图
@@ -334,29 +342,41 @@ var pic_code = {
 
                 },
                 success: function (data) {
+
                     if (!data.error){
                         data = $.parseJSON(data);
                     }
                     if (data.error == 'success' || data.error == 'SUCCESS') {
+                        //小图路径
                         pic_code._opt.img1 = data.img2;
+                        //大图路径
                         pic_code._opt.img2 = data.img1;
                         pic_code.big_pic_img.find('img').attr('src', data.img2);
                         pic_code.big_pic_img.find('img').css('width', '100%');
-                        // if (pic_code._opt.unit == 'vw') {
-                        //     pic_code._opt.Y = data.Y / 300 * (pic_code._opt.div_height / 100 * $(window).width());
-                        // } else {
-                            pic_code._opt.Y = data.Y / pic_code._opt.Proportion;
-                        //}
-                        /*var oImg = new Image(); 
-                        oImg.src=data.img2;
-                        oImg.onload = function(){
-                            pic_code.big_pic_img.css('display','block').find('img').attr('src', data.img2);
-                            pic_code.big_pic_img.find('img').css('width', '100%');
-                            pic_code.delateDiv();
-                            pic_code.create_div();
-                            pic_code.oCircle_Click();
-                            pic_code.loading.css('display', 'none');
-                        }*/
+                        //小图的宽
+                        pic_code._opt.pic_small_width = data.water_width;
+                        //小图的高
+                        pic_code._opt.pic_small_height = data.water_height;
+                        //原始图片的宽
+                        pic_code._opt.pic_original_width = data.original_width;
+                        //原始图片的高
+                        pic_code._opt.pic_original_height = data.original_height;
+                        //计算原图与显示图的比例
+                        pic_code._opt.Proportion = pic_code._opt.pic_original_width/pic_code._opt.div_width;
+                        //水印图片距顶部距离
+                        pic_code._opt.Y = data.Y / pic_code._opt.Proportion;                        
+                        //计算显示图片的高
+                        pic_code._opt.div_height = pic_code._opt.pic_original_height/pic_code._opt.Proportion;
+                        //设置验证码默认显示位置
+                        if (pic_code._opt.position_default){
+                            //设置验证码的位置
+                            pic_code.dom_obj.oPicCode.css({'position':'fixed','top':'50%','left':'50%'});
+                            pic_code.dom_obj.oPicCode.css({'margin-top':-(pic_code._opt.div_height+50)/2,'margin-left':-pic_code._opt.div_width/2});
+                        }
+                        
+                        //设置样式
+                        pic_code.set_style();
+                        
 
                         var oImg_1 = new Image(); 
                         oImg_1.src=data.img2;
@@ -399,33 +419,39 @@ var pic_code = {
 
                 },
                 success: function (data) {
-                console.log(data);
+                    console.log(data);
                     if (!data.error){
                         data = $.parseJSON(data);
                     }
                     if (data.error == 'success' || data.error == 'SUCCESS') {
+                        //小图路径
                         pic_code._opt.img1 = data.img2;
+                        //大图路径
                         pic_code._opt.img2 = data.img1;
                         pic_code.big_pic_img.find('img').attr('src', data.img2);
                         pic_code.big_pic_img.find('img').css('width', '100%');
-                        // if (pic_code._opt.unit == 'vw') {
-                        //     pic_code._opt.Y = data.Y / 300 * (pic_code._opt.div_height / 100 * $(window).width());
-                        // } else {
-                            pic_code._opt.Y = data.Y / pic_code._opt.Proportion;
-                        //}
-                        /*var oImg_1 = new Image(); 
-                        oImg_1.src=data.img2;
-
-                        var oImg_2 = new Image(); 
-                        oImg_2.src=data.img1;
-                        oImg_1.onload = function(){
-                            pic_code.big_pic_img.find('img').attr('src', data.img2);
-                            pic_code.big_pic_img.find('img').css('width', '100%');
-                            pic_code.delateDiv();
-                            pic_code.create_div();
-                            pic_code.oCircle_Click();
-                            pic_code.loading.css('display', 'none');
-                        }*/
+                        //小图的宽
+                        pic_code._opt.pic_small_width = data.water_width;
+                        //小图的高
+                        pic_code._opt.pic_small_height = data.water_height;
+                        //原始图片的宽
+                        pic_code._opt.pic_original_width = data.original_width;
+                        //原始图片的高
+                        pic_code._opt.pic_original_height = data.original_height;
+                        //计算原图与显示图的比例
+                        pic_code._opt.Proportion = pic_code._opt.pic_original_width/pic_code._opt.div_width;
+                        //水印图片距顶部距离
+                        pic_code._opt.Y = data.Y / pic_code._opt.Proportion;                        
+                        //计算显示图片的高
+                        pic_code._opt.div_height = pic_code._opt.pic_original_height/pic_code._opt.Proportion;
+                        //设置验证码默认显示位置
+                        if (pic_code._opt.position_default){
+                            //设置验证码的位置
+                            pic_code.dom_obj.oPicCode.css({'position':'fixed','top':'50%','left':'50%'});                            
+                            pic_code.dom_obj.oPicCode.css({'margin-top':-(pic_code._opt.div_height+50)/2,'margin-left':-pic_code._opt.div_width/2});
+                        }
+                        //设置样式
+                        pic_code.set_style();
 
                         var oImg_1 = new Image(); 
                         oImg_1.src=data.img2;
@@ -677,7 +703,7 @@ var pic_code = {
     create_div: function () {
         var oDiv1 = $('<div></div>');
         oDiv1.appendTo(pic_code.big_pic);
-        oDiv1.css({ 'width': pic_code._opt.pic_small_width/pic_code._opt.Proportion, 'height': pic_code._opt.pic_small_width/pic_code._opt.Proportion, 'position': 'absolute', 'left': pic_code.params.left_begin + 'px', 'top': pic_code._opt.Y + 'px', 'overflow': 'hidden', 'box-shadow': '0px 0px 3px 3px yellow inset,0px 0px 3px 3px yellow' });
+        oDiv1.css({ 'width': pic_code._opt.pic_small_width/pic_code._opt.Proportion, 'height': pic_code._opt.pic_small_height/pic_code._opt.Proportion, 'position': 'absolute', 'left': pic_code.params.left_begin + 'px', 'top': pic_code._opt.Y + 'px', 'overflow': 'hidden', 'box-shadow': '0px 0px 3px 3px yellow inset,0px 0px 3px 3px yellow' });
         oDiv1.html('<img src=' + pic_code._opt.img2 + ' style="width: 100%">');
     },
 

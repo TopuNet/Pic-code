@@ -1,0 +1,22 @@
+{
+  "name": "TopuNet-Pic-code",
+  "version": "3.1.2",
+  "description": "Topu.net 图片验证码插件",
+  "main": "jq/pic_code.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TopuNet/Pic_code.git"
+  },
+  "keywords": [
+    "topu.net"
+  ],
+  "author": "Topu.net",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TopuNet/Pic_code/issues"
+  },
+  "homepage": "https://github.com/TopuNet/Pic_code#readme"
+}
