@@ -1,4 +1,4 @@
-Pic-code 图片验证码 v3.2.0
+Pic-code 图片验证码 v3.2.1
 ====
 
 
@@ -56,8 +56,20 @@ Pic-code 图片验证码 v3.2.0
     //只需要初始化一次
     pic_code.init(opt);
 
-    //外部调用显示验证码方法
-    pic_code.open();
+    //外部调用显示验证码方法,可以重新传验证成功或者失败的回调
+    var opt = {
+        Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();
+            pic_code.doMove();
+        },
+        Callback_error_repeatedly: function () { // 多次验证失败回调，刷新验证码重新验证，优先于Callback_error  默认事件pic_code.change_background_url();
+            pic_code.change_background_url();
+        },
+        Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数，默认3
+        Callback_success: function () { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()  
+            pic_code.valid_success_callback();
+        }
+    }
+    pic_code.open(opt);
     
     //隐藏验证码 
     pic_code.pic_code_hide(); 
@@ -70,6 +82,12 @@ Pic-code 图片验证码 v3.2.0
 
 更新日志：
 -------------
+
+v3.2.0
+
+        1.删掉多余的console
+        2.pic_code.open(opt)方法添加参数，
+        3.删除loading的id，跟微信冲突
 
 v3.2.0
 

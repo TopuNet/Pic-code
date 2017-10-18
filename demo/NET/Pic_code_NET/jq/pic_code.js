@@ -2,7 +2,7 @@
 	白梦超
 	20160718
 	滑动图片验证码
-	版本 v3.2.0
+	版本 v3.2.1
 */
 
 //参数设置方法
@@ -111,7 +111,11 @@ var pic_code = {
     },
 
     //显示验证码方法
-    open : function(){
+    open : function(opt){
+        //合并参数
+        if (opt) {
+            pic_code._opt = $.extend(pic_code._opt, opt);
+        }
         pic_code.pic_code_show();
         pic_code.refresh_pic();
         //监听 刷新验证码按钮 点击事件
@@ -292,7 +296,7 @@ var pic_code = {
             "background":"#000",
             "border":"2px solid #ccc",
             "z-index": (pic_code._opt.z_index+1)
-            }).html('验证码生成中，请稍候').attr('id', 'loadingToast');
+            }).html('验证码生成中，请稍候');
         _this.loading.appendTo(_this.pic_box);
     },
 
@@ -419,7 +423,7 @@ var pic_code = {
 
                 },
                 success: function (data) {
-                    console.log(data);
+                    //console.log(data);
                     if (!data.error){
                         data = $.parseJSON(data);
                     }
