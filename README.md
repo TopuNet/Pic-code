@@ -41,7 +41,7 @@ Pic-code 图片验证码 v3.2.2
         url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
         z_index: 800, //设置标签z_index，默认800
         position_default: true, //验证码是否居中显示，true-居中显示，false-自定义显示位置，默认true
-        option : null,    //方法，返回提交时需要的其他参数，前端传，默认null
+        option : null,    //方法，返回提交时需要的其他参数（json形式），前端传，默认null
         Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();
             pic_code.doMove();
         },
@@ -86,7 +86,7 @@ Pic-code 图片验证码 v3.2.2
 
 v3.2.2
 
-        添加参数option : null，此参数是一个方法，返回掉用ajax需要的其他参数，默认是为 null
+        添加参数option : null，此参数是一个方法，返回掉用ajax需要的其他参数（json形式），默认是为 null，
 
 v3.2.1
 
