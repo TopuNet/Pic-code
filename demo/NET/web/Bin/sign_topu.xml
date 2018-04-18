@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>sign_topu</name>
+    </assembly>
+    <members>
+        <member name="T:sign_topu.DbHelperSQL">
+            <summary>
+            Copyright (C) 2004-2008 LiTianPing 
+            数据访问基础类(基于SQLServer)
+            用户可以修改满足自己项目的需要。
+            </summary>
+        </member>
+        <member name="M:sign_topu.DbHelperSQL.ExecuteSql(System.String)">
+            <summary>
+            执行SQL语句，返回影响的记录数
+            </summary>
+            <param name="SQLString">SQL语句</param>
+            <returns>影响的记录数</returns>
+        </member>
+        <member name="M:sign_topu.DbHelperSQL.GetSingle(System.String)">
+            <summary>
+            执行一条计算查询结果语句，返回查询结果（object）。
+            </summary>
+            <param name="SQLString">计算查询结果语句</param>
+            <returns>查询结果（object）</returns>
+        </member>
+        <member name="T:sign_topu.Sign">
+             <summary>
+            签名
+             </summary>
+        </member>
+        <member name="M:sign_topu.Sign.BuildSigned(System.String@,System.String@,System.Collections.Generic.List{System.String},System.Int32)">
+            <param name="non_str">输出随机数</param>
+            <param name="stamp">输出时间戳</param>
+            <param name="ParameterList">参数列表</param>
+            <param name="IsOperationDB">随机数是否要保存到数据库 0-保存</param>
+            <returns>返回签名/错误信息</returns>
+            错误代码如下：
+            10001--------密钥文件不存在
+            10002--------密钥不是16位字符串
+            30001--------向随机数表插入数据库失败,还没有建立表结构，或者建立的表字段不正确
+        </member>
+        <member name="M:sign_topu.Sign.BuildSigned(System.String@,System.String@)">
+            <param name="non_str">输出随机数</param>
+            <param name="stamp">输出时间戳</param>
+            <returns>返回签名</returns>
+        </member>
+        <member name="M:sign_topu.Sign.BuildSigned(System.String@,System.String@,System.Int32)">
+             <summary>
+             重载签名方法
+             </summary>
+             <param name="non_str">输出随机数</param>
+             <param name="stamp">输出时间戳</param>
+            <param name="IsOperationDB">0-为把随机数添加数据库 其他为不添加数据库</param>
+             <returns>返回签名</returns>
+        </member>
+        <member name="M:sign_topu.Sign.BuildSigned(System.String@,System.String@,System.Collections.Generic.List{System.String})">
+             <summary>
+             重载签名方法
+             </summary>
+             <param name="non_str">输出随机数</param>
+            <param name="stamp">输出时间戳</param>
+            <param name="ParameterList">参数列表</param>
+             <returns>返回签名</returns>
+        </member>
+        <member name="M:sign_topu.Sign.VerifySigned(System.String,System.String,System.String,System.Collections.Generic.List{System.String},System.Int32)">
+            <param name="signature">签名</param>
+            <param name="non_str">随机数</param>
+            <param name="stamp">时间戳</param>
+            <param name="ParameterList">参数列表</param>
+            <param name="IsOperationDB">随机数是否保存到了数据库 0-已保存</param>
+            <returns>返回SUCCESS/FAIL/错误代码</returns>
+            错误代码如下：
+            20001--------参数签名为空
+            20002--------参数随机数为空
+            20003--------参数时间戳为空
+            20004--------参数随机数不是16位字符串
+            30002--------验证随机数是否存在失败,还没有建立表结构，或者建立的表字段不正确
+            30003--------删除随机数失败,还没有建立表结构，或者建立的表字段不正确
+        </member>
+        <member name="M:sign_topu.Sign.VerifySigned(System.String,System.String,System.String)">
+            重载验证签名方法
+             <param name="signature">签名</param>
+             <param name="non_str">随机数</param>
+             <param name="stamp">时间戳</param>
+             <returns>返回SUCCESS/FAIL/错误代码</returns>
+        </member>
+        <member name="M:sign_topu.Sign.VerifySigned(System.String,System.String,System.String,System.Collections.Generic.List{System.String})">
+            重载验证签名方法
+             <param name="signature">签名</param>
+             <param name="non_str">随机数</param>
+             <param name="stamp">时间戳</param>
+             <param name="ParameterList">参数列表</param>
+             <returns>返回SUCCESS/FAIL/错误代码</returns>
+        </member>
+        <member name="M:sign_topu.Sign.VerifySigned(System.String,System.String,System.String,System.Int32)">
+            重载验证签名方法
+            <param name="signature">签名</param>
+            <param name="non_str">随机数</param>
+            <param name="stamp">时间戳</param>
+            <param name="IsOperationDB">随机数是否保存到了数据库 0-已保存</param>
+             <returns>返回SUCCESS/FAIL/错误代码</returns>
+        </member>
+        <member name="M:sign_topu.Sign.DeleteNon_str(System.String)">
+            <param name="non_str">随机数</param>
+            <returns>删除的条数</returns>
+        </member>
+        <member name="M:sign_topu.Sign.DeleteBeforeNon_str">
+            <summary>
+            删除一个小时前的随机数
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:sign_topu.Sign.getSign_str(System.Collections.Generic.List{System.String},System.String,System.String)">
+            <param name="ParameterList">参数列表</param>
+            <param name="non_str">随机数</param>
+            <param name="stamp">时间戳</param>
+            <returns>签名/错误信息</returns>
+            错误代码如下：
+            10001--------密钥文件不存在
+            10002--------密钥不是16位字符串
+        </member>
+        <member name="M:sign_topu.Sign.createRandomStr(System.Int32,System.Int32)">
+            <summary>
+            生成随机码。返回字符串
+            </summary>
+            <param name="n">位数，数字+字母的组合时请键入偶数</param>
+            <param name="Kind">生成种类。1-纯数字 2-纯大写字母 3-纯小写字母 4-数字+大写字母 5-数字+小写字母 6-大写字母或小写字母 7-数字+纯大写字母或小写字母</param>
+            <returns></returns>
+        </member>
+        <member name="M:sign_topu.Sign.create_timestamp(System.DateTime)">
+            <summary>
+            生成时间戳
+            </summary>
+            <param name="dt">日期。注意时差，可以用DateTime.UtcNow</param>
+        </member>
+        <member name="M:sign_topu.Sign.sha1(System.String)">
+            <summary>
+            SHA1加密
+            </summary>
+            <param name="str">要加密的字符串</param>
+        </member>
+    </members>
+</doc>
