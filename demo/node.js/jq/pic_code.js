@@ -2,7 +2,7 @@
 	白梦超
 	20160718
 	滑动图片验证码
-	版本 v3.2.1
+	版本 v3.2.2
 */
 
 //参数设置方法
@@ -25,6 +25,8 @@ var t_opt = {
     Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址，默认/Pic_code/Pic_code.ashx
     url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址，默认/Pic_code/Pic_code_valid.ashx
     z_index: 800, //设置标签z_index，默认800
+    position_default: true, //验证码是否居中显示，true-居中显示，false-自定义显示位置，默认true
+    option : null,    //方法，返回提交时需要的其他参数（json形式），前端传，默认null
     Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
         //pic_code.doMove();
     },
@@ -32,7 +34,7 @@ var t_opt = {
         //pic_code.change_background_url();
     },
     Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数
-    Callback_success: function () { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()  
+    Callback_success: function (data) { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()  
         //pic_code.valid_success_callback();
     }
 }
@@ -59,6 +61,7 @@ var pic_code = {
             url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
             z_index: 800, //设置标签z_index，默认800
             position_default: true, //验证码是否居中显示，true-居中显示，false-自定义显示位置，默认true
+            option : null,    //方法，返回提交时需要的其他参数，前端传，默认null
             Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();
                 pic_code.doMove();
             },
@@ -66,7 +69,7 @@ var pic_code = {
                 pic_code.change_background_url();
             },
             Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数，默认3
-            Callback_success: function () { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()  
+            Callback_success: function (data) { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()  
                 pic_code.valid_success_callback();
             }
         };
@@ -593,7 +596,17 @@ var pic_code = {
                 pic_code.Cancle_oCircle_Click();
                 //滑块消失
                 pic_code.pic_code_circle.css('display', 'none');
+                var json = {};
+                var json_l = {};
                 if (pic_code._opt.Is_Cross_domain) {
+                    json = {
+                        dix_long: dix_long,
+                        valid_range: pic_code._opt.valid_range
+                    }
+                    if(pic_code._opt.option !== null){
+                        json_l = pic_code._opt.option();
+                        json = $.extend(json, json_l);
+                    }
                     $.ajax({
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         url: pic_code._opt.url_submit,
@@ -602,17 +615,14 @@ var pic_code = {
                         },
                         crossDomain: true,
                         type: 'POST',
-                        data: {
-                            dix_long: dix_long,
-                            valid_range: pic_code._opt.valid_range
-                        },
+                        data: json,
                         success: function (data) {
                             if (!data.error){
                                 data = $.parseJSON(data);
                             }
                             //验证成功的操作
                             if (data.error == 'success' || data.error == 'SUCCESS') {
-                                pic_code._opt.Callback_success();
+                                pic_code._opt.Callback_success(data);
                                 //验证失败的操作
                             } else {
                                 pic_code.pic_code_error_count.error += 1;
@@ -630,13 +640,18 @@ var pic_code = {
                         }
                     });
                 } else {
+                    json = {
+                        dix_long: dix_long,
+                        valid_range: pic_code._opt.valid_range
+                    }
+                    if(pic_code._opt.option !== null){
+                        json_l = pic_code._opt.option();
+                        json = $.extend(json, json_l);
+                    }                    
                     $.ajax({
                         url: pic_code._opt.url_submit,
                         type: 'POST',
-                        data: {
-                            dix_long: dix_long,
-                            valid_range: pic_code._opt.valid_range
-                        },
+                        data: json,
                         success: function (data) {
                             if (!data.error){
                                 data = $.parseJSON(data);
@@ -644,7 +659,7 @@ var pic_code = {
                             
                             //验证成功的操作
                             if (data.error == 'success' || data.error == 'SUCCESS') {
-                                pic_code._opt.Callback_success();
+                                pic_code._opt.Callback_success(data);
                                 //验证失败的操作
                             } else {
                                 pic_code.pic_code_error_count.error += 1;
