@@ -38,10 +38,19 @@ Pic-code 图片验证码 v3.2.2
         Pic_click_key: true, //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏，默认true
         Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域，默认false
         Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址，默认'/Pic_code/Pic_code.ashx'
-        url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
+        url_submit: '/Pic_code/Pic_code_valid.ashx', //验证地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
+        url_submit_para_extend : null,    //方法，返回提交验证时的参数扩展（json形式），默认null
+                                        // return {
+                                        //     handlerHost: http://www.abc.com, // 验证成功后发起后续接口请求的主机地址，有默认值，如使用默认值请不要传
+                                        //     handlerPath: /Handler/abc.ashx, // 验证成功后发起后续接口请求的接口路径，有默认值，如使用默认值请不要传
+                                        //     handlerType: Member, // 验证成功后发起后续接口请求的接口名，默认管理员，如使用默认值请不要传
+                                        //     handlerAct: Select, // 验证成功后发起后续接口请求的方法名，默认登录，如使用默认值请不要传
+                                        //     key1: value1, // 自定义键值对
+                                        //     key2: value2,
+                                        //     keyN: valueN 
+                                        // };
         z_index: 800, //设置标签z_index，默认800
         position_default: true, //验证码是否居中显示，true-居中显示，false-自定义显示位置，默认true
-        option : null,    //方法，返回提交时需要的其他参数（json形式），前端传，默认null
         Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();
             pic_code.doMove();
         },
@@ -49,10 +58,10 @@ Pic-code 图片验证码 v3.2.2
             pic_code.change_background_url();
         },
         Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数，默认3
-        Callback_success: function () { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()
+        Callback_success: function (data) { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback(), data-接口返回信息
             pic_code.valid_success_callback();
         }
-    }
+    };
 
     //只需要初始化一次
     pic_code.init(opt);
@@ -84,9 +93,11 @@ Pic-code 图片验证码 v3.2.2
 更新日志：
 -------------
 
+
 v3.2.2
 
-        添加参数option : null，此参数是一个方法，返回调用ajax需要的其他参数（json形式），默认是为 null，
+        添加参数url_submit_para_extend : null,    //方法，返回提交验证时的参数扩展（json形式），默认null
+        添加成功回调的参数 Callback_success: function (data)，  data - 成功回调返回值
 
 v3.2.1
 

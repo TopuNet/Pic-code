@@ -8,13 +8,8 @@
 //参数设置方法
 /*
 var t_opt = {
-    pic_position: ".pic_code",//图片验证码外包层class或id
-    pic_original_width: , //图片原始宽(以px为单位,后台传过来的值)，
-    pic_original_height: , //图片原始高(以px为单位,后台传过来的值)，
-    pic_small_width: , //水印小图的宽（以px为单位,后台传过来的值）
-    pic_small_height: , //水印小图的宽（以px为单位,后台传过来的值）
-    div_width: 300,//显示图片的宽，默认300px
-    div_height: ,//显示图片的高，通过计算得来的（初始的默认值是显示图片的宽的一半）
+    pic_position: ".pic_code",//图片验证码外包层class或id，默认.pic_code
+    div_width: 300,//设置显示的大图的宽，默认300
     valid_range: 5, // 图片验证正确的容错范围，默认是5,单位是px，不受unit影响
     unit: "px", // 宽高及容错范围单位 "px|vw", 默认px，且IE6/7/8强制使用px
     pic_mask: true,  //验证码大遮罩层，false-不显示遮罩层，true-显示遮罩层，默认true
@@ -22,22 +17,31 @@ var t_opt = {
     Pic_mask_opacity: 0.8, ////验证码大遮罩层透明度，默认0.8
     Pic_click_key: true, //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏，默认true
     Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域，默认false
-    Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址，默认/Pic_code/Pic_code.ashx
-    url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址，默认/Pic_code/Pic_code_valid.ashx
+    Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址，默认'/Pic_code/Pic_code.ashx'
+    url_submit: '/Pic_code/Pic_code_valid.ashx', //验证地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
+    url_submit_para_extend : null,    //方法，返回提交验证时的参数扩展（json形式），默认null
+                                    // return {
+                                    //     handlerHost: http://www.abc.com, // 验证成功后发起后续接口请求的主机地址，有默认值，如使用默认值请不要传
+                                    //     handlerPath: /Handler/abc.ashx, // 验证成功后发起后续接口请求的接口路径，有默认值，如使用默认值请不要传
+                                    //     handlerType: Member, // 验证成功后发起后续接口请求的接口名，默认管理员，如使用默认值请不要传
+                                    //     handlerAct: Select, // 验证成功后发起后续接口请求的方法名，默认登录，如使用默认值请不要传
+                                    //     key1: value1, // 自定义键值对
+                                    //     key2: value2,
+                                    //     keyN: valueN 
+                                    // };
     z_index: 800, //设置标签z_index，默认800
     position_default: true, //验证码是否居中显示，true-居中显示，false-自定义显示位置，默认true
-    option : null,    //方法，返回提交时需要的其他参数（json形式），前端传，默认null
-    Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(oDiv2);
-        //pic_code.doMove();
+    Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();
+        pic_code.doMove();
     },
     Callback_error_repeatedly: function () { // 多次验证失败回调，刷新验证码重新验证，优先于Callback_error  默认事件pic_code.change_background_url();
-        //pic_code.change_background_url();
+        pic_code.change_background_url();
     },
-    Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数
-    Callback_success: function (data) { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()  
-        //pic_code.valid_success_callback();
+    Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数，默认3
+    Callback_success: function (data) { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback(), data接口返回信息
+        pic_code.valid_success_callback();
     }
-}
+};
 */
 
 var pic_code = {
@@ -58,10 +62,19 @@ var pic_code = {
             Pic_click_key: true, //开关，点击遮罩层验证码是否隐藏，true-隐藏，false-不隐藏，默认true
             Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域，默认false
             Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址，默认'/Pic_code/Pic_code.ashx'
-            url_submit: '/Pic_code/Pic_code_valid.ashx', //验证码，验证完成提交的地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
+            url_submit: '/Pic_code/Pic_code_valid.ashx', //验证地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
+            url_submit_para_extend : null,    //方法，返回提交验证时的参数扩展（json形式），默认null
+                                            // return {
+                                            //     handlerHost: http://www.abc.com, // 验证成功后发起后续接口请求的主机地址，有默认值，如使用默认值请不要传
+                                            //     handlerPath: /Handler/abc.ashx, // 验证成功后发起后续接口请求的接口路径，有默认值，如使用默认值请不要传
+                                            //     handlerType: Member, // 验证成功后发起后续接口请求的接口名，默认管理员，如使用默认值请不要传
+                                            //     handlerAct: Select, // 验证成功后发起后续接口请求的方法名，默认登录，如使用默认值请不要传
+                                            //     key1: value1, // 自定义键值对
+                                            //     key2: value2,
+                                            //     keyN: valueN 
+                                            // };
             z_index: 800, //设置标签z_index，默认800
             position_default: true, //验证码是否居中显示，true-居中显示，false-自定义显示位置，默认true
-            option : null,    //方法，返回提交时需要的其他参数（json形式），前端传，默认null
             Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();
                 pic_code.doMove();
             },
@@ -69,7 +82,7 @@ var pic_code = {
                 pic_code.change_background_url();
             },
             Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数，默认3
-            Callback_success: function (data) { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback()  
+            Callback_success: function (data) { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback(), data-接口返回信息
                 pic_code.valid_success_callback();
             }
         };
@@ -95,10 +108,10 @@ var pic_code = {
         //设置验证码默认显示位置
         if (pic_code._opt.position_default){
             //设置验证码的位置
-            pic_code.dom_obj.oPicCode.css({'position':'fixed','top':'50%','left':'50%'});                            
+            pic_code.dom_obj.oPicCode.css({'position':'fixed','top':'50%','left':'50%'});
             pic_code.dom_obj.oPicCode.css({'margin-top':-(pic_code._opt.div_height+50)/2,'margin-left':-pic_code._opt.div_width/2});
         }
-        
+
 
         //点击弹层验证码消失
         $('#pic_code_mask').click(function () {
@@ -371,7 +384,7 @@ var pic_code = {
                         //计算原图与显示图的比例
                         pic_code._opt.Proportion = pic_code._opt.pic_original_width/pic_code._opt.div_width;
                         //水印图片距顶部距离
-                        pic_code._opt.Y = data.Y / pic_code._opt.Proportion;                        
+                        pic_code._opt.Y = data.Y / pic_code._opt.Proportion;
                         //计算显示图片的高
                         pic_code._opt.div_height = pic_code._opt.pic_original_height/pic_code._opt.Proportion;
                         //设置验证码默认显示位置
@@ -380,20 +393,20 @@ var pic_code = {
                             pic_code.dom_obj.oPicCode.css({'position':'fixed','top':'50%','left':'50%'});
                             pic_code.dom_obj.oPicCode.css({'margin-top':-(pic_code._opt.div_height+50)/2,'margin-left':-pic_code._opt.div_width/2});
                         }
-                        
+
                         //设置样式
                         pic_code.set_style();
-                        
 
-                        var oImg_1 = new Image(); 
+
+                        var oImg_1 = new Image();
                         oImg_1.src=data.img2;
 
-                        var oImg_2 = new Image(); 
+                        var oImg_2 = new Image();
                         oImg_2.src=data.img1;
 
                         var num = 0;
                         var complete = function(){
-                            
+
                             pic_code.delateDiv();
                             pic_code.create_div();
                             pic_code.oCircle_Click();
@@ -406,7 +419,7 @@ var pic_code = {
                             if(num>=2){
                                 complete();
                             }
-                            
+
                         };
                         oImg_2.onload = function(){
                             num++;
@@ -448,27 +461,27 @@ var pic_code = {
                         //计算原图与显示图的比例
                         pic_code._opt.Proportion = pic_code._opt.pic_original_width/pic_code._opt.div_width;
                         //水印图片距顶部距离
-                        pic_code._opt.Y = data.Y / pic_code._opt.Proportion;                        
+                        pic_code._opt.Y = data.Y / pic_code._opt.Proportion;
                         //计算显示图片的高
                         pic_code._opt.div_height = pic_code._opt.pic_original_height/pic_code._opt.Proportion;
                         //设置验证码默认显示位置
                         if (pic_code._opt.position_default){
                             //设置验证码的位置
-                            pic_code.dom_obj.oPicCode.css({'position':'fixed','top':'50%','left':'50%'});                            
+                            pic_code.dom_obj.oPicCode.css({'position':'fixed','top':'50%','left':'50%'});
                             pic_code.dom_obj.oPicCode.css({'margin-top':-(pic_code._opt.div_height+50)/2,'margin-left':-pic_code._opt.div_width/2});
                         }
                         //设置样式
                         pic_code.set_style();
 
-                        var oImg_1 = new Image(); 
+                        var oImg_1 = new Image();
                         oImg_1.src=data.img2;
 
-                        var oImg_2 = new Image(); 
+                        var oImg_2 = new Image();
                         oImg_2.src=data.img1;
 
                         var num = 0;
                         var complete = function(){
-                            
+
                             pic_code.delateDiv();
                             pic_code.create_div();
                             pic_code.oCircle_Click();
@@ -481,7 +494,7 @@ var pic_code = {
                             if(num>=2){
                                 complete();
                             }
-                            
+
                         };
                         oImg_2.onload = function(){
                             num++;
@@ -489,7 +502,7 @@ var pic_code = {
                                 complete();
                             }
                         };
-                        
+
                     }
                 }
             });
@@ -524,7 +537,7 @@ var pic_code = {
             pic_code.oCircle_Click();
             // 监听 刷新验证码按钮 点击事件
             pic_code.oRef_click();
-            
+
         }, 300);
     },
 
@@ -603,8 +616,8 @@ var pic_code = {
                         dix_long: dix_long,
                         valid_range: pic_code._opt.valid_range
                     }
-                    if(pic_code._opt.option !== null){
-                        json_l = pic_code._opt.option();
+                    if(pic_code._opt.url_submit_para_extend !== null){
+                        json_l = pic_code._opt.url_submit_para_extend();
                         json = $.extend(json, json_l);
                     }
                     $.ajax({
@@ -644,10 +657,10 @@ var pic_code = {
                         dix_long: dix_long,
                         valid_range: pic_code._opt.valid_range
                     }
-                    if(pic_code._opt.option !== null){
-                        json_l = pic_code._opt.option();
+                    if(pic_code._opt.url_submit_para_extend !== null){
+                        json_l = pic_code._opt.url_submit_para_extend();
                         json = $.extend(json, json_l);
-                    }                    
+                    }
                     $.ajax({
                         url: pic_code._opt.url_submit,
                         type: 'POST',
@@ -656,7 +669,7 @@ var pic_code = {
                             if (!data.error){
                                 data = $.parseJSON(data);
                             }
-                            
+
                             //验证成功的操作
                             if (data.error == 'success' || data.error == 'SUCCESS') {
                                 pic_code._opt.Callback_success(data);
@@ -722,6 +735,7 @@ var pic_code = {
     create_div: function () {
         var oDiv1 = $('<div></div>');
         oDiv1.appendTo(pic_code.big_pic);
+        console.log(pic_code._opt.pic_small_width/pic_code._opt.Proportion)
         oDiv1.css({ 'width': pic_code._opt.pic_small_width/pic_code._opt.Proportion, 'height': pic_code._opt.pic_small_height/pic_code._opt.Proportion, 'position': 'absolute', 'left': pic_code.params.left_begin + 'px', 'top': pic_code._opt.Y + 'px', 'overflow': 'hidden', 'box-shadow': '0px 0px 3px 3px yellow inset,0px 0px 3px 3px yellow' });
         oDiv1.html('<img src=' + pic_code._opt.img2 + ' style="width: 100%">');
     },

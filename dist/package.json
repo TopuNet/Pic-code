@@ -1,6 +1,6 @@
 {
-  "name": "topunet-pic-code",
-  "version": "3.2.0",
+  "name": "TopuNet-Pic-code",
+  "version": "3.2.2",
   "description": "Topu.net 图片验证码插件",
   "main": "jq/pic_code.js",
   "scripts": {
