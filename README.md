@@ -86,7 +86,7 @@ Pic-code 图片验证码 v3.2.2
 
 v3.2.2
 
-        添加参数option : null，此参数是一个方法，返回掉用ajax需要的其他参数（json形式），默认是为 null，
+        添加参数option : null，此参数是一个方法，返回调用ajax需要的其他参数（json形式），默认是为 null，
 
 v3.2.1
 
