@@ -39,16 +39,17 @@ Pic-code 图片验证码 v3.2.2
         Is_Cross_domain: false,//是否跨域 true-跨域（后端需配置跨域允许当前来源），false-不跨域，默认false
         Url_getPic: '/Pic_code/Pic_code.ashx', //获取图片地址的接口，跨域请填写带域名的地址，默认'/Pic_code/Pic_code.ashx'
         url_submit: '/Pic_code/Pic_code_valid.ashx', //验证地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
-        url_submit_para_extend : null,    //方法，返回提交验证时的参数扩展（json形式），默认null
-                                        // return {
-                                        //     handlerHost: http://www.abc.com, // 验证成功后发起后续接口请求的主机地址，有默认值，如使用默认值请不要传
-                                        //     handlerPath: /Handler/abc.ashx, // 验证成功后发起后续接口请求的接口路径，有默认值，如使用默认值请不要传
-                                        //     handlerType: Member, // 验证成功后发起后续接口请求的接口名，默认管理员，如使用默认值请不要传
-                                        //     handlerAct: Select, // 验证成功后发起后续接口请求的方法名，默认登录，如使用默认值请不要传
-                                        //     key1: value1, // 自定义键值对
-                                        //     key2: value2,
-                                        //     keyN: valueN 
-                                        // };
+        url_submit_para_extend : function(){    //方法，返回提交验证时的参数扩展，默认null
+            return {
+                handlerHost: http://www.abc.com, // 验证成功后发起后续接口请求的主机地址，有默认值，如使用默认值请不要传
+                handlerPath: /Handler/abc.ashx, // 验证成功后发起后续接口请求的接口路径，有默认值，如使用默认值请不要传
+                handlerType: Member, // 验证成功后发起后续接口请求的接口名，默认管理员，如使用默认值请不要传
+                handlerAct: Select, // 验证成功后发起后续接口请求的方法名，默认登录，如使用默认值请不要传
+                key1: value1, // 自定义键值对
+                key2: value2,
+                keyN: valueN 
+            };
+        },
         z_index: 800, //设置标签z_index，默认800
         position_default: true, //验证码是否居中显示，true-居中显示，false-自定义显示位置，默认true
         Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();
