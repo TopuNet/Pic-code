@@ -10,7 +10,7 @@ using System.Net;
 using System.IO;
 using System.Text;
 
-public class Pic_code_valid : IHttpHandler,IRequiresSessionState
+public class Pic_code_valid : IHttpHandler, IRequiresSessionState
 {
 
     public void ProcessRequest(HttpContext context)
@@ -18,11 +18,10 @@ public class Pic_code_valid : IHttpHandler,IRequiresSessionState
 
         context.Response.ContentType = "text/plain";
 
-        string secret_filePath=HttpContext.Current.Server.MapPath("/Pic_code/secret.txt");
+        string secret_filePath = context.Server.MapPath("/Pic_code/secret.txt");
 
         // 默认验证登录的接口，***不要改***，dev时，从js传过来
-        string handlerHost_default = "http://www.abc.com";
-        string handlerPath_default = "/Handler/abc.ashx";
+        string handlerUrl_default = "http://www.abc.com/Handler/abc.ashx";
         string handlerType_default = "Members";
         string handlerAct_default = "Select";
 
@@ -55,24 +54,54 @@ public class Pic_code_valid : IHttpHandler,IRequiresSessionState
         #endregion
 
         #region ==验证Pic_code==
-        if (HttpContext.Current.Session["pic_code_validcode"] == null)
+        if (context.Session["pic_code_validcode"] == null)
         {
             context.Response.Write("{\"error\":\"ERROR\"}");
             context.Response.End();
         }
         else
         {
-            int session = Convert.ToInt16(HttpContext.Current.Session["pic_code_validcode"]);
+            #region ==记录验证次数，第三次不管对错都清空session==
+            context.Response.Write(string.Format(
+                "{{\"error\":\"APIERROR\",\"error_msg\":\"sessionX={0},count={1},dix_long={2}\"}}",
+                context.Session["pic_code_validcode"],
+                context.Session["pic_code_validcode_count"],
+                dix_long
+            ));
+            try
+            {
+                context.Session["pic_code_validcode_count"] = Convert.ToInt16(context.Session["pic_code_validcode_count"]) + 1;
+                if (Convert.ToInt16(context.Session["pic_code_validcode_count"]) >= 3)
+                    context.Session["pic_code_validcode"] = null;
+            }
+            catch
+            {
+                context.Session["pic_code_validcode_count"] = 1;
+            }
+            #endregion
+
+            context.Response.End();
+
+            int session = Convert.ToInt16(context.Session["pic_code_validcode"]);
             if (session - valid_range <= dix_long && dix_long <= session + valid_range)
             {
-                #region ==验证登录==
-                System.Collections.Specialized.NameValueCollection collection = HttpContext.Current.Request.Form;
-                int len = collection.Count;
+                #region ==获得表单参数==
+                System.Collections.Specialized.NameValueCollection collection = context.Request.Form;
+                string handlerUrl = ConvertString(collection["handlerUrl"], handlerUrl_default);
+                string handlerType = ConvertString(context.Request.Form["handlerType"], handlerType_default);
+                string handlerAct = ConvertString(context.Request.Form["handlerAct"], handlerAct_default);
+                #endregion
 
-                string handlerHost = ConvertString(collection["handlerHost"], handlerHost_default);
-                string handlerPath = ConvertString(HttpContext.Current.Request.Form["handlerPath"], handlerPath_default);
-                string handlerType = ConvertString(HttpContext.Current.Request.Form["handlerType"], handlerType_default);
-                string handlerAct = ConvertString(HttpContext.Current.Request.Form["handlerAct"], handlerAct_default);
+                #region ==如不需要进行接口请求，则直接返回SUCCESS==
+                if (handlerUrl == "no")
+                {
+                    context.Response.Write("{\"error\":\"SUCCESS\"}");
+                    context.Response.End();
+                }
+                #endregion
+
+                #region ==发起接口请求==
+                int len = collection.Count;
 
                 JsonData json = new JsonData();
                 JsonData value = new JsonData();
@@ -84,10 +113,11 @@ public class Pic_code_valid : IHttpHandler,IRequiresSessionState
                 {
                     switch (key.ToLower())
                     {
-                        case "handlerhost":
-                        case "handlerpath":
+                        case "handlerurl":
                         case "handlertype":
                         case "handleract":
+                        case "dix_long":
+                        case "valid_range":
                             break;
                         default:
                             value[key] = ConvertString(collection[key]);
@@ -113,37 +143,29 @@ public class Pic_code_valid : IHttpHandler,IRequiresSessionState
                 json["sign_valid"] = value;
                 para = "{\"validate_k\":\"1\",";
                 para += "\"params\":[{\"type\":\"" + handlerType + "\",\"act\":\"" + handlerAct + "\",\"para\":" + JsonMapper.ToJson(json) + "}]}";
-                LitJson.JsonData jd = LitJson.JsonMapper.ToObject(getXMLHTTP(handlerHost + handlerPath, "POST", para));
-                #endregion
-
+                LitJson.JsonData jd = new JsonData();
                 try
                 {
-                    // {"result":[{"error":"SUCCESS","Token":"-1"}],"new_Token":""}
-
-                    context.Response.Write(jd["result"][0].ToJson());
+                    string result = getXMLHTTP(handlerUrl, "POST", para);
+                    jd = LitJson.JsonMapper.ToObject(result);
+                    try
+                    {
+                        context.Response.Write(LitJson.JsonMapper.ToJson(jd["result"][0]));
+                    }
+                    catch
+                    {
+                        context.Response.Write("{\"error\":\"APIERROR\",\"error_msg\":\"" + LitJson.JsonMapper.ToJson(result) + "\"}");
+                    }
                 }
                 catch
                 {
-                    // {"error":"30001"}
-                    context.Response.Write("{\"error\":\"SUCCESS\",\"Token\":\"-2\"}");
+                    context.Response.Write("{\"error\":\"APIERROR\",\"error_msg\":\"服务器未知错误\"}");
                 }
                 context.Response.End();
+                #endregion
             }
             else
             {
-                #region ==记录验证次数，第三次不管对错都清空session==
-                try
-                {
-                    HttpContext.Current.Session["pic_code_validcode_count"] = Convert.ToInt16(HttpContext.Current.Session["pic_code_validcode_count"]) + 1;
-                    if (Convert.ToInt16(HttpContext.Current.Session["pic_code_validcode_count"]) >= 3)
-                        HttpContext.Current.Session["pic_code_validcode"] = null;
-                }
-                catch
-                {
-                    HttpContext.Current.Session["pic_code_validcode_count"] = 1;
-                }
-                #endregion
-
                 context.Response.Write("{\"error\":\"ERROR\"}");
                 context.Response.End();
             }

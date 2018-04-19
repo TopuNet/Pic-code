@@ -589,7 +589,7 @@ exports.CreateTopuSignatureSync = function(ParamsJsonObj, non_str, stamp) {
     // _str += "}";
 
     return {
-        "source": "node",
+        "source": "default",
         "non_str": _non_str,
         "stamp": _stamp,
         "signature": _sign
