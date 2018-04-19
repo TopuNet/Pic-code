@@ -1,4 +1,4 @@
-Pic-code 图片验证码 v3.2.2
+Pic-code 图片验证码 v3.3.1
 ====
 
 
@@ -41,8 +41,7 @@ Pic-code 图片验证码 v3.2.2
         url_submit: '/Pic_code/Pic_code_valid.ashx', //验证地址，跨域请填写带域名的地址，默认'/Pic_code/Pic_code_valid.ashx'
         url_submit_para_extend : function(){    //方法，返回提交验证时的参数扩展，默认null
             return {
-                handlerHost: http://www.abc.com, // 验证成功后发起后续接口请求的主机地址，有默认值，如使用默认值请不要传
-                handlerPath: /Handler/abc.ashx, // 验证成功后发起后续接口请求的接口路径，有默认值，如使用默认值请不要传
+                handlerUrl: http://www.abc.com/Handler/abc.ashx, // 验证成功后发起后续接口请求的接口地址，有默认值，如使用默认值请不要传。如不需要后续请求接口，传"no"
                 handlerType: Member, // 验证成功后发起后续接口请求的接口名，默认管理员，如使用默认值请不要传
                 handlerAct: Select, // 验证成功后发起后续接口请求的方法名，默认登录，如使用默认值请不要传
                 key1: value1, // 自定义键值对
@@ -52,15 +51,18 @@ Pic-code 图片验证码 v3.2.2
         },
         z_index: 800, //设置标签z_index，默认800
         position_default: true, //验证码是否居中显示，true-居中显示，false-自定义显示位置，默认true
-        Callback_error: function () { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove();
-            pic_code.doMove();
+        Callback_error: function (error_msg) { // 验证失败回调，默认为滑块和拼图小块滑回原位pic_code.doMove(error_msg); error_msg为错误信息，有默认值
+            pic_code.doMove(error_msg);
         },
         Callback_error_repeatedly: function () { // 多次验证失败回调，刷新验证码重新验证，优先于Callback_error  默认事件pic_code.change_background_url();
             pic_code.change_background_url();
         },
         Callback_error_repeatedly_count: 3, // 触发多次验证失败回调的失败次数，默认3
-        Callback_success: function (data) { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback(), data-接口返回信息
+        Callback_success: function (data) { //验证成功回调，提示验证成功，默认方法：pic_code.valid_success_callback(), data接口返回信息
             pic_code.valid_success_callback();
+        },
+        Callback_success_apierror: function(error_msg) { // 验证成功后，请求接口发生服务级错误，无默认。error_msg为错误信息
+            console.log("接口错误：" + error_msg);
         }
     };
 
@@ -89,11 +91,15 @@ Pic-code 图片验证码 v3.2.2
     pic_code.refresh_pic();
 
 
-
-
 更新日志：
 -------------
 
+v3.3.1
+
+        添加参数 Callback_success_apierror: function(error_msg) { } // 验证成功后，请求接口发生服务级错误，无默认。error_msg为错误信息
+        参数 url_submit_para_extend 的方法反值中的 handlerHost 和 handlerPath 合并为 handlerUrl; 传 "no" 代表不需要请求接口
+        参数 Callback_error 和 pic_code.doMove() 增加参数error_msg，可自己修改错误信息，同时也有默认值
+        重新整理demo
 
 v3.2.2
 

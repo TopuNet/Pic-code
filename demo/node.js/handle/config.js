@@ -42,6 +42,7 @@ exports.port = 8130; //端口号
         }
     },
     {}];
+    RestFul_url: 接口地址，默认http://config.host + ":" +  config.port + "/Handler/Handlers.ashx";
     query: req.query;
     validate_k: 1(默认)-签名认证 2-adminUsers的Token认证;
     valid_token_obj:
@@ -51,13 +52,17 @@ exports.port = 8130; //端口号
             "token": "0eff33c8631a4b69196a11b6db065b380a5d22c0"
         }
 */
-exports.getDataFromRestFul = function(callback, Json_Select, query, validate_k, valid_token_obj) {
+exports.getDataFromRestFul = function(callback, Json_Select, RestFul_url, query, validate_k, valid_token_obj) {
+
     validate_k = validate_k || "1";
     validate_token_obj = valid_token_obj || "";
-    query = func.transParameters(query, "");
+    if (query)
+        query = func.transParameters(query, "");
 
     // 接口地址
-    var RestFul_url = "http://" + config.host + ":" + config.port + "/Handler/Handlers.ashx?" + query;
+    RestFul_url = RestFul_url || "http://" + config.host + ":" + config.port + "/Handler/Handlers.ashx";
+    if (query && query !== "")
+        RestFul_url += "?" + query;
 
     // 成功回调
     var finish_deal = function(err, result) {
@@ -113,7 +118,20 @@ exports.getDataFromRestFul = function(callback, Json_Select, query, validate_k, 
             PostData: ajax_para
         };
 
+        // console.log("\n\n config", 119, "opt=\n", JSON.stringify(opt));
+
         func.Request(opt, function(data) {
+
+            // console.log("\n\n config", 123, "data=\n", typeof data);
+            // console.log(JSON.stringify(data));
+
+            if (typeof data == "string") {
+                finish_deal("服务器未知错误");
+                return;
+            } else if (!data.result) {
+                finish_deal(JSON.stringify(data));
+                return;
+            }
 
             var i = 0,
                 j = 0,
@@ -130,6 +148,8 @@ exports.getDataFromRestFul = function(callback, Json_Select, query, validate_k, 
             finish_deal(null, result);
 
         }, function(err) {
+
+            // console.log("\n\n config", 148, "err=\n", JSON.stringify(err));
             finish_deal(err);
         });
     }

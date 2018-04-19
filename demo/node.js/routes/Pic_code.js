@@ -6,8 +6,8 @@ var router = require("express").Router(),
     async = require("async"),
     fs = require("fs"),
     images = require("images"),
-    func = require("../handle/functions");
-
+    func = require("../handle/functions"),
+    config = require("../handle/config.js");
 
 router.post("/create", function(req, res) {
 
@@ -198,6 +198,7 @@ router.post("/create", function(req, res) {
     var xToSession = function(callback) {
 
         req.session.Pic_code_x = image_crop_pos.x;
+        req.session.Pic_code_valid_count = 0;
 
         callback(null);
     };
@@ -269,26 +270,93 @@ router.post("/valid", function(req, res) {
     // 验证
     var valid = function(callback) {
 
-        // console.log("\n\n", "Pic_code", 268, "sessionX:", sessionX, "Post_data:", Post_data);
+        // console.log("\n\n", "Pic_code", 273, "sessionX:", sessionX, "session_count:", req.session.Pic_code_valid_count, "Post_data:", Post_data);
 
-        var result = (sessionX >= Post_data.x - Post_data.valid_range) &&
+        var valid_result = sessionX && (sessionX >= Post_data.x - Post_data.valid_range) &&
             (sessionX <= Post_data.x + Post_data.valid_range);
 
-        callback(null, result);
+        callback(null, valid_result);
+    };
+
+    // 发起接口请求
+    var handlerApi = function(valid_result, callback) {
+
+        // 验证3次后必须换图
+        if (!req.session.Pic_code_valid_count) {
+            req.session.Pic_code_valid_count = 0;
+        }
+        if (++req.session.Pic_code_valid_count >= 3)
+            req.session.Pic_code_x = null;
+
+        if (!valid_result) { // error
+
+            callback(null, { error: "ERROR" });
+
+        } else { // success
+
+            var api_callback = function(err, _result) {
+
+                if (err) { // 接口报错
+
+                    callback(null, {
+                        error: "APIERROR",
+                        error_msg: err
+                    });
+
+                } else { // 接口成功
+
+                    callback(null, _result.length ? _result[0] : _result);
+
+                }
+            };
+
+            // 获得表单参数（过滤掉没用的）
+            var form_data = req.body;
+            var params = {};
+            for (var data in form_data) {
+                switch (data.toString().toLowerCase()) {
+                    case "handlerurl":
+                    case "handlertype":
+                    case "handleract":
+                    case "dix_long":
+                    case "valid_range":
+                        break;
+                    default:
+                        params[data] = form_data[data];
+                        break;
+                }
+            }
+
+            // 如不需要接口请求，则直接返回SUCCESS
+            if (form_data.handlerUrl == "no") {
+                callback(null, { error: "SUCCESS" });
+                return;
+            }
+
+            // 组织接口参数
+            var Json_Select = [{
+                "type": form_data.handlerType || "adminUsers",
+                "act": form_data.handlerAct || "Select_Login",
+                "para": {
+                    "params": params
+                }
+            }];
+
+            config.getDataFromRestFul(api_callback, Json_Select, form_data.handlerUrl);
+        }
+
     };
 
     async.waterfall([
         getPostParas,
         getX_from_session,
-        valid
+        valid,
+        handlerApi
     ], function(err, result) {
-        var result_obj = {
-            error: result ? "SUCCESS" : "ERROR"
-        };
 
         // console.log("\n\n", "Pic_code", 285, "result_obj:", result_obj);
 
-        res.send(JSON.stringify(result_obj));
+        res.send(JSON.stringify(result));
 
     });
 });
