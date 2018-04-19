@@ -62,12 +62,6 @@ public class Pic_code_valid : IHttpHandler, IRequiresSessionState
         else
         {
             #region ==记录验证次数，第三次不管对错都清空session==
-            context.Response.Write(string.Format(
-                "{{\"error\":\"APIERROR\",\"error_msg\":\"sessionX={0},count={1},dix_long={2}\"}}",
-                context.Session["pic_code_validcode"],
-                context.Session["pic_code_validcode_count"],
-                dix_long
-            ));
             try
             {
                 context.Session["pic_code_validcode_count"] = Convert.ToInt16(context.Session["pic_code_validcode_count"]) + 1;
@@ -79,8 +73,6 @@ public class Pic_code_valid : IHttpHandler, IRequiresSessionState
                 context.Session["pic_code_validcode_count"] = 1;
             }
             #endregion
-
-            context.Response.End();
 
             int session = Convert.ToInt16(context.Session["pic_code_validcode"]);
             if (session - valid_range <= dix_long && dix_long <= session + valid_range)
